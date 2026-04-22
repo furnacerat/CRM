@@ -137,19 +137,9 @@ export default function Estimates() {
                       {estimate.projects.join(', ')}
                     </p>
                   </div>
-                  <Badge
-                    variant={
-                      estimate.status === 'accepted'
-                        ? 'success'
-                        : estimate.status === 'sent'
-                        ? 'info'
-                        : estimate.status === 'declined'
-                        ? 'error'
-                        : 'default'
-                    }
-                  >
+                  <span className={`${styles.estimateStatus} ${estimate.status}`}>
                     {estimate.status}
-                  </Badge>
+                  </span>
                 </div>
 
                 <div className={styles.estimateAmount}>

@@ -15,7 +15,7 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   margin-top: 16px;
 }
 
@@ -28,10 +28,24 @@
 .leadCard {
   cursor: pointer;
   transition: all var(--transition-base);
+  position: relative;
 }
 
 .leadCard:hover {
   border-color: var(--border-default);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.leadCard::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: var(--border-subtle);
+  opacity: 0.5;
 }
 
 .leadHeader {
@@ -44,7 +58,7 @@
 .leadAvatar {
   width: 44px;
   height: 44px;
-  background: var(--accent-primary);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, #D97706 100%);
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
@@ -53,6 +67,12 @@
   font-weight: 600;
   color: var(--text-inverse);
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+  transition: box-shadow var(--transition-base);
+}
+
+.leadCard:hover .leadAvatar {
+  box-shadow: 0 0 12px var(--glow-accent-strong);
 }
 
 .leadInfo {

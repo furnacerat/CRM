@@ -70,6 +70,7 @@
   border-bottom: 1px solid var(--border-subtle);
   cursor: pointer;
   transition: all var(--transition-base);
+  position: relative;
 }
 
 .followUpItem:last-child {
@@ -78,6 +79,25 @@
 
 .followUpItem:hover {
   background: rgba(255, 255, 255, 0.02);
+  transform: translateX(4px);
+}
+
+.followUpItem.urgent {
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.08) 0%, transparent 20%);
+}
+
+.followUpItem.urgent::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--status-error);
+}
+
+.followUpItem.urgent:hover {
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.12) 0%, rgba(255, 255, 255, 0.02) 20%);
 }
 
 .followUpDot {
@@ -118,8 +138,16 @@
   justify-content: center;
   background: var(--bg-tertiary);
   border-radius: var(--radius-md);
-  color: var(--text-secondary);
+  color: var(--text-muted);
   transition: all var(--transition-base);
+  opacity: 0.7;
+}
+
+.followUpItem:hover .followUpBtn {
+  opacity: 1;
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  box-shadow: 0 0 12px var(--glow-accent);
 }
 
 .followUpBtn:hover {

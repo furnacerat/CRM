@@ -540,10 +540,33 @@ function JobDetail({ job, onToggleTask, onStatusChange }) {
 
       <div className={styles.detailSection}>
         <h4 className={styles.sectionTitle}>Photos</h4>
-        <div className={styles.photoPlaceholder}>
-          <Image size={24} />
-          <span>Photo gallery coming soon</span>
-        </div>
+        {(job.photos && job.photos.length > 0) ? (
+          <div className={styles.photoSection}>
+            {['before', 'after'].map((group) => {
+              const photos = job.photos?.filter(p => p.group === group) || [];
+              if (photos.length === 0) return null;
+              return (
+                <div key={group} className={styles.photoGroup}>
+                  <div className={`${styles.photoGroupTitle} ${styles[group]}`}>
+                    {group === 'before' ? '📸 Before' : '✨ After'}
+                  </div>
+                  <div className={styles.photoGrid}>
+                    {photos.map((photo, i) => (
+                      <div key={i} className={styles.photoThumb}>
+                        <img src={photo.url || 'https://placehold.co/200'} alt={photo.label || group} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className={styles.photoPlaceholder}>
+            <Image size={24} />
+            <span>Tap to add photos</span>
+          </div>
+        )}
       </div>
 
       <div className={styles.detailActions}>

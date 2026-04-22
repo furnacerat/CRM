@@ -1,18 +1,21 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { initialLeads } from '../data/leads';
 import { initialCustomers } from '../data/customers';
+import { initialEstimates } from '../data/estimates';
 
 const CRMContext = createContext();
 
 export function CRMProvider({ children }) {
   const [leads, setLeads] = useState([]);
   const [customers, setCustomers] = useState([]);
+  const [estimates, setEstimates] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setTimeout(() => {
       setLeads(initialLeads);
       setCustomers(initialCustomers);
+      setEstimates(initialEstimates);
       setLoading(false);
     }, 300);
   }, []);

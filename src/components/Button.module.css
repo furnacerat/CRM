@@ -21,7 +21,7 @@
 .primary {
   background: linear-gradient(135deg, var(--accent-primary) 0%, #D97706 100%);
   color: var(--text-inverse);
-  box-shadow: var(--shadow-base), 0 0 0 1px rgba(245,158,11,0.3) inset;
+  box-shadow: var(--shadow-md), 0 0 0 1px rgba(245,158,11,0.3) inset, 0 0 20px rgba(245,158,11,0.15);
 }
 
 .primary::before {
@@ -31,18 +31,18 @@
   left: 0;
   right: 0;
   height: 50%;
-  background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%);
   pointer-events: none;
 }
 
 .primary:hover:not(:disabled) {
   background: linear-gradient(135deg, var(--accent-primary-hover) 0%, #F59E0B 100%);
-  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.25);
-  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(245, 158, 11, 0.3);
+  transform: translateY(-2px) scale(1.02);
 }
 
 .primary:active:not(:disabled) {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
 }
 
 .secondary {

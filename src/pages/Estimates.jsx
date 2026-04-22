@@ -136,6 +136,22 @@ export default function Estimates() {
                     <p className={styles.estimateProjects}>
                       {estimate.projects.join(', ')}
                     </p>
+                    {(() => {
+                      const cost = estimate.items?.reduce((s, i) => s + (i.unitCost || 0) * (i.quantity || 1), 0) || 0;
+                      const sell = estimate.totalSell || 0;
+                      const margin = cost > 0 ? ((sell - cost) / sell) * 100 : 0;
+                      
+                      if (estimate.status === 'sent' && margin >= 25) {
+                        return <span className={`${styles.guidance} ${styles.highMargin}`}>High margin opportunity</span>;
+                      }
+                      if (estimate.status === 'sent') {
+                        return <span className={`${styles.guidance} ${styles.followup}`}>Needs follow-up</span>;
+                      }
+                      if (estimate.status === 'draft' && sell > 0 && margin >= 20) {
+                        return <span className={`${styles.guidance} ${styles.ready}`}>Ready to send</span>;
+                      }
+                      return null;
+                    })()}
                   </div>
                   <span className={`${styles.estimateStatus} ${estimate.status}`}>
                     {estimate.status}

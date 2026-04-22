@@ -1,8 +1,10 @@
 export const JOB_STATUSES = [
   { id: 'scheduled', label: 'Scheduled', color: 'info' },
   { id: 'in_progress', label: 'In Progress', color: 'warning' },
-  { id: 'waiting_material', label: 'Waiting on Material', color: 'default' },
-  { id: 'waiting_customer', label: 'Waiting on Customer', color: 'default' },
+  { id: 'waiting_material', label: 'Waiting on Material', color: 'warning', signal: 'material' },
+  { id: 'waiting_customer', label: 'Waiting on Customer', color: 'warning', signal: 'customer' },
+  { id: 'delayed', label: 'Delayed', color: 'error', signal: 'delayed' },
+  { id: 'on_track', label: 'On Track', color: 'success', signal: 'on_track' },
   { id: 'completed', label: 'Completed', color: 'success' },
   { id: 'closed', label: 'Closed', color: 'success' },
 ];

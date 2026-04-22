@@ -80,14 +80,34 @@ export default function Jobs() {
               tasks: j.tasks.map((t) =>
                 t.id === taskId ? { ...t, completed: !t.completed } : t
               ),
-              updatedAt: new Date().toISOString().split('T')[0],
+updatedAt: new Date().toISOString().split('T')[0],
             }
           : j
-      )
-    );
+        )
+      );
   };
 
   const getStatusInfo = (status) => JOB_STATUSES.find((s) => s.id === status) || { label: status, color: 'default' };
+
+  const getJobHealth = (job) => {
+    const now = new Date();
+    const end = job.endDate ? new Date(job.endDate) : null;
+    const start = job.startDate ? new Date(job.startDate) : null;
+    const tasks = job.tasks || [];
+    const completed = tasks.filter((t) => t.completed).length;
+    const total = tasks.length;
+    
+    if (!start || !end) return 'healthy';
+    
+    const daysTotal = (end - start) / (1000 * 60 * 60 * 24);
+    const daysPassed = (now - start) / (1000 * 60 * 60 * 24);
+    const timelineScore = daysTotal > 0 ? (daysPassed / daysTotal) * 100 : 50;
+    const taskScore = total > 0 ? (completed / total) * 100 : 50;
+    
+    if (timelineScore > 100 || taskScore < 30) return 'overBudget';
+    if (timelineScore > 80 || taskScore < 50) return 'risk';
+    return 'healthy';
+  };
 
   return (
     <div className={styles.page}>
@@ -156,9 +176,18 @@ export default function Jobs() {
                       );
                     })()}
                   </div>
-                  <Badge variant={getStatusInfo(job.status).color}>
-                    {getStatusInfo(job.status).label}
-                  </Badge>
+                  {(() => {
+                      const info = getStatusInfo(job.status);
+                      return (
+                        <>
+                          <Badge variant={info.color}>{info.label}</Badge>
+                          {info.signal === 'material' && <span className={`${styles.jobSignal} ${styles.material}`}>Material</span>}
+                          {info.signal === 'customer' && <span className={`${styles.jobSignal} ${styles.customer}`}>Customer</span>}
+                          {info.signal === 'delayed' && <span className={`${styles.jobSignal} ${styles.delayed}`}>Delayed</span>}
+                          {info.signal === 'on_track' && <span className={`${styles.jobSignal} ${styles.on_track}`}>On Track</span>}
+                        </>
+                      );
+                    })()}
                 </div>
 
                 <div className={styles.jobMeta}>
@@ -200,6 +229,11 @@ export default function Jobs() {
                   <div className={styles.taskProgress}>
                     <span>
                       {job.tasks.filter((t) => t.completed).length}/{job.tasks.length} tasks
+                    </span>
+                    <span className={`${styles.jobHealth} ${styles[getJobHealth(job)]}`}>
+                      {getJobHealth(job) === 'healthy' && 'On Track'}
+                      {getJobHealth(job) === 'risk' && 'At Risk'}
+                      {getJobHealth(job) === 'overBudget' && 'Overdue'}
                     </span>
                     <div className={styles.progressBar}>
                       <div
@@ -398,7 +432,18 @@ function JobDetail({ job, onToggleTask, onStatusChange }) {
   return (
     <div className={styles.detail}>
       <div className={styles.detailHeader}>
-        <Badge variant={getStatusInfo(job.status).color}>{getStatusInfo(job.status).label}</Badge>
+        {(() => {
+          const info = getStatusInfo(job.status);
+          return (
+            <>
+              <Badge variant={info.color}>{info.label}</Badge>
+              {info.signal === 'material' && <span className={`${styles.jobSignal} ${styles.material}`}>Material</span>}
+              {info.signal === 'customer' && <span className={`${styles.jobSignal} ${styles.customer}`}>Customer</span>}
+              {info.signal === 'delayed' && <span className={`${styles.jobSignal} ${styles.delayed}`}>Delayed</span>}
+              {info.signal === 'on_track' && <span className={`${styles.jobSignal} ${styles.on_track}`}>On Track</span>}
+            </>
+          );
+        })()}
       </div>
 
       <div className={styles.financials}>

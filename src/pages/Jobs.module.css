@@ -12,6 +12,55 @@
   margin-bottom: 16px;
 }
 
+/* Job Signal Indicator */
+.jobSignal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  border-radius: var(--radius-full);
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.jobSignal.material {
+  background: rgba(234, 179, 8, 0.12);
+  color: var(--status-warning);
+}
+
+.jobSignal.material::before {
+  content: '📦';
+}
+
+.jobSignal.customer {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--status-info);
+}
+
+.jobSignal.customer::before {
+  content: '👤';
+}
+
+.jobSignal.delayed {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--status-error);
+}
+
+.jobSignal.delayed::before {
+  content: '⚠️';
+}
+
+.jobSignal.on_track {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--status-success);
+}
+
+.jobSignal.on_track::before {
+  content: '✅';
+}
+
 .stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -619,4 +668,41 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
   }
+}
+
+/* Job Health Indicator */
+.jobHealth {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.jobHealth::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.jobHealth.healthy::before {
+  background: var(--status-success);
+  box-shadow: 0 0 6px var(--status-success);
+}
+
+.jobHealth.risk::before {
+  background: var(--status-warning);
+  box-shadow: 0 0 6px var(--status-warning);
+}
+
+.jobHealth.overBudget::before {
+  background: var(--status-error);
+  box-shadow: 0 0 6px var(--status-error);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }

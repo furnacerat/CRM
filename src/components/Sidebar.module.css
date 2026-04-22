@@ -81,12 +81,14 @@
 .navItem:hover {
   background: rgba(255, 255, 255, 0.03);
   color: var(--text-secondary);
+  transform: translateX(2px);
 }
 
 .navItem.active {
   color: var(--accent-primary);
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.04) 100%);
   box-shadow: 0 0 16px var(--glow-accent-subtle), 0 0 0 1px var(--border-glow);
+  transform: translateX(4px);
 }
 
 .navIcon {

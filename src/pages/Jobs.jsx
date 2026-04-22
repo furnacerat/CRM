@@ -490,12 +490,21 @@ function JobDetail({ job, onToggleTask, onStatusChange }) {
           <h4 className={styles.sectionTitle}>Tasks ({job.tasks?.filter((t) => t.completed).length || 0}/{job.tasks?.length || 0})</h4>
         </div>
         <div className={styles.tasksList}>
-          {job.tasks?.map((task) => (
+          {job.tasks?.map((task, index) => (
             <div
               key={task.id}
               className={`${styles.taskItem} ${task.completed ? styles.completedTask : ''}`}
-              onClick={() => onToggleTask(task.id)}
+              onClick={() => {
+                if (!task.completed) {
+                  const el = document.activeElement;
+                  if (el) el.classList.add(styles.completing);
+                }
+                onToggleTask(task.id);
+              }}
             >
+              {task.priority && (
+                <div className={`${styles.taskPriority} ${styles[task.priority]}`} />
+              )}
               <div className={`${styles.checkbox} ${task.completed ? styles.checked : ''}`}>
                 {task.completed && <CheckCircle size={14} />}
               </div>

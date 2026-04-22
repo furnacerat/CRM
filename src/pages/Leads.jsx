@@ -20,6 +20,8 @@ import {
   Edit,
   Trash2,
   CheckCircle,
+  AlertCircle,
+  Flag,
 } from 'lucide-react';
 import { PageHeader } from '../components/TopHeader';
 import Card from '../components/Card';
@@ -91,6 +93,23 @@ export default function Leads() {
           />
         </div>
 
+        <div className={styles.pipelineBar}>
+          {LEAD_STAGES.slice(0, 6).map((s, i) => (
+            <div key={s.id}>
+              {i > 0 && <div className={styles.pipelineDivider} />}
+              <div 
+                className={`${styles.pipelineStage} ${filter === s.id ? styles.active : ''}`}
+                onClick={() => setFilter(filter === s.id ? 'all' : s.id)}
+              >
+                <span className={styles.pipelineStageCount}>
+                  {counts[s.id] || 0}
+                </span>
+                <span>{s.label}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
         <FilterChips options={options} value={filter} onChange={setFilter} />
 
         <div className={styles.list}>
@@ -155,22 +174,49 @@ function LeadCard({ lead, onClick, onStageChange }) {
     new Date(lead.followUpDate) < new Date() &&
     !['won', 'lost'].includes(lead.stage);
 
+  const isDueSoon = lead.followUpDate && !isOverdue && 
+    new Date(lead.followUpDate) <= new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
+
   const stage = LEAD_STAGES.find((s) => s.id === lead.stage);
+  const priority = lead.priority || 'normal';
+  const priorityClass = priority === 'high' ? styles.priorityHigh : priority === 'urgent' ? styles.priorityUrgent : '';
+
+  const followUpClass = isOverdue ? styles.urgent : isDueSoon ? styles.soon : '';
 
   return (
-    <Card className={styles.leadCard} onClick={onClick}>
+    <Card className={`${styles.leadCard} ${priority !== 'normal' ? styles[priority] : ''}`} onClick={onClick}>
+      {priority !== 'normal' && (
+        <div className={`${styles.priorityDot} ${priorityClass}`} />
+      )}
+      
       <div className={styles.leadHeader}>
         <div className={styles.leadAvatar}>
           {lead.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
         </div>
         <div className={styles.leadInfo}>
-          <h3 className={styles.leadName}>{lead.name}</h3>
+          <h3 className={styles.leadName}>
+            {lead.name}
+            {lead.starred && <Star size={14} fill="#F59E0B" color="#F59E0B" />}
+          </h3>
           <p className={styles.leadProject}>{lead.projectType}</p>
         </div>
-        <Badge variant={stage?.color || 'default'} size="sm">
+        <span className={`${styles.leadStatus} ${lead.stage}`}>
           {stage?.label}
-        </Badge>
+        </span>
       </div>
+
+      {lead.followUpDate && (
+        <div className={`${styles.followUpSection} ${followUpClass}`}>
+          <Clock className={styles.followUpIcon} size={14} />
+          <span className={styles.followUpText}>
+            {isOverdue ? 'Overdue: ' : isDueSoon ? 'Due soon: ' : ''}
+            {new Date(lead.followUpDate).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+            })}
+          </span>
+        </div>
+      )}
 
       {lead.address && (
         <div className={styles.leadDetail}>
@@ -179,41 +225,32 @@ function LeadCard({ lead, onClick, onStageChange }) {
         </div>
       )}
 
-      {lead.followUpDate && (
-        <div className={`${styles.leadDetail} ${isOverdue ? styles.overdue : ''}`}>
-          <Clock size={14} />
-          <span>
-            Follow-up: {new Date(lead.followUpDate).toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric',
-            })}
-          </span>
-        </div>
-      )}
-
       <div className={styles.leadActions}>
-        <a href={`tel:${lead.phone}`} className={styles.actionBtn} onClick={(e) => e.stopPropagation()}>
-          <Phone size={18} />
+        <a href={`tel:${lead.phone}`} className={`${styles.actionBtn} ${styles.call}`} onClick={(e) => e.stopPropagation()}>
+          <Phone size={16} />
+          Call
         </a>
-        <a href={`sms:${lead.phone}`} className={styles.actionBtn} onClick={(e) => e.stopPropagation()}>
-          <MessageSquare size={18} />
+        <a href={`sms:${lead.phone}`} className={`${styles.actionBtn} ${styles.sms}`} onClick={(e) => e.stopPropagation()}>
+          <MessageSquare size={16} />
+          Text
         </a>
-        <a href={`mailto:${lead.email}`} className={styles.actionBtn} onClick={(e) => e.stopPropagation()}>
-          <Mail size={18} />
+        <a href={`mailto:${lead.email}`} className={`${styles.actionBtn} ${styles.email}`} onClick={(e) => e.stopPropagation()}>
+          <Mail size={16} />
+          Email
         </a>
       </div>
 
-      <div className={styles.stageButtons}>
+      <div className={styles.quickStage}>
         {LEAD_STAGES.filter((s) => s.id !== lead.stage).slice(0, 3).map((s) => (
           <button
             key={s.id}
-            className={styles.stageBtn}
+            className={styles.quickStageBtn}
             onClick={(e) => {
               e.stopPropagation();
               onStageChange(s.id);
             }}
           >
-            Move to {s.label}
+            {s.label}
           </button>
         ))}
       </div>

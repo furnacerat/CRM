@@ -1,83 +1,497 @@
-import { Wrench, Plus, Play, Pause, CheckCircle, Clock } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import {
+  Search,
+  Plus,
+  Wrench,
+  Calendar,
+  Clock,
+  CheckCircle,
+  MoreVertical,
+  ChevronRight,
+  MapPin,
+  DollarSign,
+  Users,
+  ArrowRight,
+  X,
+  Image,
+  FileText,
+  Edit,
+  Trash2,
+} from 'lucide-react';
 import { PageHeader } from '../components/TopHeader';
 import Card from '../components/Card';
 import Button from '../components/Button';
+import Input from '../components/Input';
 import Badge from '../components/Badge';
 import FilterChips from '../components/FilterChips';
-import { useState } from 'react';
-import styles from './ListPage.module.css';
+import Drawer from '../components/Drawer';
+import { useCRM } from '../context/CRMContext';
+import { initialJobs, JOB_STATUSES, JOB_PHASES } from '../data/jobs';
+import { initialEstimates } from '../data/estimates';
+import styles from './Jobs.module.css';
 
-const filterOptions = [
-  { value: 'all', label: 'All', count: 8 },
-  { value: 'in_progress', label: 'Active', count: 5 },
-  { value: 'scheduled', label: 'Scheduled', count: 2 },
-  { value: 'completed', label: 'Completed', count: 1 },
-];
-
-const jobs = [
-  { id: 1, customer: 'Sarah Johnson', project: 'Kitchen Remodel', amount: '$24,500', status: 'in_progress', start: 'Apr 15', end: 'May 10' },
-  { id: 2, customer: 'Mike Williams', project: 'Bathroom Update', amount: '$12,800', status: 'in_progress', start: 'Apr 18', end: 'May 5' },
-  { id: 3, customer: 'Emily Davis', project: 'Deck Installation', amount: '$8,400', status: 'scheduled', start: 'May 1', end: 'May 15' },
-  { id: 4, customer: 'Thompson Realty', project: 'Office Reno', amount: '$45,200', status: 'in_progress', start: 'Apr 10', end: 'Apr 30' },
-  { id: 5, customer: 'Robert Chen', project: 'Basement Finish', amount: '$18,900', status: 'scheduled', start: 'May 5', end: 'Jun 1' },
+const statusFilters = [
+  { value: 'all', label: 'All', count: 0 },
+  { value: 'scheduled', label: 'Scheduled', count: 0 },
+  { value: 'in_progress', label: 'Active', count: 0 },
+  { value: 'completed', label: 'Completed', count: 0 },
 ];
 
 export default function Jobs() {
+  const navigate = useNavigate();
+  const { customers, estimates } = useCRM();
+  const [jobs, setJobs] = useState(initialJobs);
   const [filter, setFilter] = useState('all');
-  
+  const [search, setSearch] = useState('');
+  const [showBuilder, setShowBuilder] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
+
+  const filteredJobs = jobs.filter((job) => {
+    const matchesSearch =
+      !search ||
+      job.customerName.toLowerCase().includes(search.toLowerCase()) ||
+      job.project.toLowerCase().includes(search.toLowerCase());
+    const matchesFilter = filter === 'all' || job.status === filter;
+    return matchesSearch && matchesFilter;
+  });
+
+  const getCounts = () => {
+    const counts = { all: jobs.length };
+    ['scheduled', 'in_progress', 'completed', 'closed'].forEach((s) => {
+      counts[s] = jobs.filter((j) => j.status === s).length;
+    });
+    return counts;
+  };
+
+  const counts = getCounts();
+  const options = statusFilters.map((o) => ({ ...o, count: counts[o.value] || 0 }));
+
+  const updateJobStatus = (id, status) => {
+    setJobs((prev) =>
+      prev.map((j) =>
+        j.id === id ? { ...j, status, updatedAt: new Date().toISOString().split('T')[0] } : j
+      )
+    );
+  };
+
+  const toggleTask = (jobId, taskId) => {
+    setJobs((prev) =>
+      prev.map((j) =>
+        j.id === jobId
+          ? {
+              ...j,
+              tasks: j.tasks.map((t) =>
+                t.id === taskId ? { ...t, completed: !t.completed } : t
+              ),
+              updatedAt: new Date().toISOString().split('T')[0],
+            }
+          : j
+      )
+    );
+  };
+
+  const getStatusInfo = (status) => JOB_STATUSES.find((s) => s.id === status) || { label: status, color: 'default' };
+
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <PageHeader title="Jobs" subtitle="Track your ongoing projects">
-          <Button icon={Plus}>New Job</Button>
+        <PageHeader title="Jobs" subtitle={`${jobs.length} jobs`}>
+          <Button icon={Plus} onClick={() => setShowBuilder(true)}>
+            New Job
+          </Button>
         </PageHeader>
-        
-        <FilterChips 
-          options={filterOptions} 
-          value={filter} 
-          onChange={setFilter} 
-        />
-        
-        <div className={styles.content}>
-          <Card className={styles.card}>
-            <div className={styles.listHeader}>
-              <span className={styles.colName}>Job</span>
-              <span className={styles.colEmail}>Customer</span>
-              <span className={styles.colPhone}>Contract</span>
-              <span className={styles.colStatus}>Status</span>
-              <span className={styles.colDate}>Timeline</span>
-            </div>
-            <div className={styles.list}>
-              {jobs.map((job) => (
-                <div key={job.id} className={styles.listItem}>
-                  <div className={styles.colName}>
-                    <div className={styles.avatar}>
-                      <Wrench size={20} />
-                    </div>
-                    <div className={styles.info}>
-                      <span className={styles.title}>{job.project}</span>
-                      <span className={styles.subtitle}>{job.customer}</span>
-                    </div>
-                  </div>
-                  <div className={styles.colEmail}>{job.customer}</div>
-                  <div className={styles.colPhone}>{job.amount}</div>
-                  <div className={styles.colStatus}>
-                    <Badge 
-                      variant={
-                        job.status === 'in_progress' ? 'warning' : 
-                        job.status === 'completed' ? 'success' : 'default'
-                      } 
-                      size="sm"
-                    >
-                      {job.status.replace('_', ' ')}
-                    </Badge>
-                  </div>
-                  <div className={styles.colDate}>{job.start} - {job.end}</div>
-                </div>
-              ))}
-            </div>
-          </Card>
+
+        <div className={styles.search}>
+          <Input
+            icon={Search}
+            placeholder="Search jobs..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
+
+        <FilterChips options={options} value={filter} onChange={setFilter} />
+
+        <div className={styles.stats}>
+          <div className={styles.statCard}>
+            <span className={styles.statLabel}>Active Value</span>
+            <span className={styles.statValue}>
+              ${jobs.filter((j) => j.status === 'in_progress').reduce((sum, j) => sum + (j.contractAmount || 0), 0).toLocaleString()}
+            </span>
+          </div>
+          <div className={styles.statCard}>
+            <span className={styles.statLabel}>Scheduled</span>
+            <span className={styles.statValue}>
+              ${jobs.filter((j) => j.status === 'scheduled').reduce((sum, j) => sum + (j.contractAmount || 0), 0).toLocaleString()}
+            </span>
+          </div>
+        </div>
+
+        <div className={styles.list}>
+          {filteredJobs.map((job, i) => (
+            <motion.div
+              key={job.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
+            >
+              <Card className={styles.jobCard} onClick={() => setSelectedJob(job)}>
+                <div className={styles.jobHeader}>
+                  <div className={styles.jobInfo}>
+                    <h3 className={styles.jobName}>{job.project}</h3>
+                    <p className={styles.jobCustomer}>{job.customerName}</p>
+                  </div>
+                  <Badge variant={getStatusInfo(job.status).color}>
+                    {getStatusInfo(job.status).label}
+                  </Badge>
+                </div>
+
+                <div className={styles.jobMeta}>
+                  <div className={styles.metaItem}>
+                    <Calendar size={14} />
+                    <span>
+                      {job.startDate && new Date(job.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      {job.endDate && ` - ${new Date(job.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}
+                    </span>
+                  </div>
+                  <div className={styles.metaItem}>
+                    <DollarSign size={14} />
+                    <span>${(job.contractAmount || 0).toLocaleString()}</span>
+                  </div>
+                </div>
+
+                {job.phases && job.phases.length > 0 && (
+                  <div className={styles.phases}>
+                    {job.phases.slice(0, 4).map((phase) => (
+                      <div
+                        key={phase.id}
+                        className={`${styles.phaseDot} ${
+                          phase.status === 'completed'
+                            ? styles.completed
+                            : phase.status === 'in_progress'
+                            ? styles.active
+                            : ''
+                        }`}
+                        title={phase.label}
+                      />
+                    ))}
+                    {job.phases.length > 4 && (
+                      <span className={styles.morePhases}>+{job.phases.length - 4}</span>
+                    )}
+                  </div>
+                )}
+
+                {job.tasks && job.tasks.length > 0 && (
+                  <div className={styles.taskProgress}>
+                    <span>
+                      {job.tasks.filter((t) => t.completed).length}/{job.tasks.length} tasks
+                    </span>
+                    <div className={styles.progressBar}>
+                      <div
+                        className={styles.progressFill}
+                        style={{
+                          width: `${(job.tasks.filter((t) => t.completed).length / job.tasks.length) * 100}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      <Drawer isOpen={showBuilder} onClose={() => setShowBuilder(false)} title="Create Job">
+        <JobBuilder
+          customers={customers}
+          estimates={estimates}
+          onClose={() => setShowBuilder(false)}
+          onSave={(job) => {
+            setJobs((prev) => [{ ...job, id: `job-${Date.now()}` }, ...prev]);
+            setShowBuilder(false);
+          }}
+        />
+      </Drawer>
+
+      <Drawer
+        isOpen={!!selectedJob}
+        onClose={() => setSelectedJob(null)}
+        title={selectedJob?.project}
+      >
+        {selectedJob && (
+          <JobDetail
+            job={selectedJob}
+            onToggleTask={(taskId) => toggleTask(selectedJob.id, taskId)}
+            onStatusChange={(status) => {
+              updateJobStatus(selectedJob.id, status);
+              setSelectedJob({ ...selectedJob, status });
+            }}
+          />
+        )}
+      </Drawer>
+    </div>
+  );
+}
+
+function JobBuilder({ customers, estimates, onClose, onSave }) {
+  const [form, setForm] = useState({
+    customerId: '',
+    customerName: '',
+    project: '',
+    estimateId: '',
+    startDate: '',
+    endDate: '',
+    contractAmount: 0,
+    notes: '',
+  });
+
+  const handleEstimateSelect = (estimateId) => {
+    const estimate = estimates.find((e) => e.id === estimateId);
+    if (estimate) {
+      setForm({
+        ...form,
+        estimateId,
+        customerName: estimate.customerName,
+        project: estimate.projects.join(', '),
+        contractAmount: estimate.totalSell,
+      });
+    }
+  };
+
+  const handleSave = () => {
+    if (form.project && form.customerName) {
+      onSave({
+        ...form,
+        status: 'scheduled',
+        phases: [],
+        tasks: [],
+        photos: [],
+        expenses: [],
+        invoices: [],
+        createdAt: new Date().toISOString().split('T')[0],
+        updatedAt: new Date().toISOString().split('T')[0],
+      });
+    }
+  };
+
+  return (
+    <div className={styles.builder}>
+      <div className={styles.builderSection}>
+        <h4 className={styles.sectionTitle}>From Estimate (Optional)</h4>
+        <select
+          className={styles.select}
+          value={form.estimateId}
+          onChange={(e) => handleEstimateSelect(e.target.value)}
+        >
+          <option value="">Select accepted estimate</option>
+          {estimates.filter((e) => e.status === 'accepted').map((est) => (
+            <option key={est.id} value={est.id}>
+              {est.customerName} - {est.projects.join(', ')} (${est.totalSell?.toLocaleString()})
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className={styles.builderSection}>
+        <h4 className={styles.sectionTitle}>Customer</h4>
+        <select
+          className={styles.select}
+          value={form.customerId}
+          onChange={(e) => {
+            const customer = customers.find((c) => c.id === e.target.value);
+            setForm({ ...form, customerId: e.target.value, customerName: customer?.name || '' });
+          }}
+        >
+          <option value="">Select customer</option>
+          {customers.map((customer) => (
+            <option key={customer.id} value={customer.id}>
+              {customer.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className={styles.builderSection}>
+        <h4 className={styles.sectionTitle}>Project Name</h4>
+        <input
+          className={styles.input}
+          value={form.project}
+          onChange={(e) => setForm({ ...form, project: e.target.value })}
+          placeholder="e.g., Kitchen Remodel"
+        />
+      </div>
+
+      <div className={styles.builderRow}>
+        <div className={styles.builderSection}>
+          <h4 className={styles.sectionTitle}>Start Date</h4>
+          <input
+            type="date"
+            className={styles.input}
+            value={form.startDate}
+            onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+          />
+        </div>
+        <div className={styles.builderSection}>
+          <h4 className={styles.sectionTitle}>End Date</h4>
+          <input
+            type="date"
+            className={styles.input}
+            value={form.endDate}
+            onChange={(e) => setForm({ ...form, endDate: e.target.value })}
+          />
+        </div>
+      </div>
+
+      <div className={styles.builderSection}>
+        <h4 className={styles.sectionTitle}>Contract Amount</h4>
+        <input
+          type="number"
+          className={styles.input}
+          value={form.contractAmount}
+          onChange={(e) => setForm({ ...form, contractAmount: parseFloat(e.target.value) || 0 })}
+          placeholder="$"
+        />
+      </div>
+
+      <div className={styles.builderSection}>
+        <h4 className={styles.sectionTitle}>Notes</h4>
+        <textarea
+          className={styles.textarea}
+          value={form.notes}
+          onChange={(e) => setForm({ ...form, notes: e.target.value })}
+          placeholder="Project notes..."
+          rows={3}
+        />
+      </div>
+
+      <div className={styles.builderActions}>
+        <Button variant="ghost" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button onClick={handleSave}>Create Job</Button>
+      </div>
+    </div>
+  );
+}
+
+function JobDetail({ job, onToggleTask, onStatusChange }) {
+  const [newNote, setNewNote] = useState('');
+  const [showNoteInput, setShowNoteInput] = useState(false);
+  const getStatusInfo = (status) => JOB_STATUSES.find((s) => s.id === status) || { label: status, color: 'default' };
+
+  return (
+    <div className={styles.detail}>
+      <div className={styles.detailHeader}>
+        <Badge variant={getStatusInfo(job.status).color}>{getStatusInfo(job.status).label}</Badge>
+      </div>
+
+      <div className={styles.detailSection}>
+        <h4 className={styles.sectionTitle}>Customer</h4>
+        <p>{job.customerName}</p>
+      </div>
+
+      <div className={styles.detailSection}>
+        <h4 className={styles.sectionTitle}>Timeline</h4>
+        <div className={styles.timeline}>
+          <Calendar size={16} />
+          <span>
+            {job.startDate && new Date(job.startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            {job.endDate && ` - ${new Date(job.endDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`}
+          </span>
+        </div>
+      </div>
+
+      <div className={styles.detailSection}>
+        <h4 className={styles.sectionTitle}>Contract</h4>
+        <p className={styles.contractAmount}>${(job.contractAmount || 0).toLocaleString()}</p>
+      </div>
+
+      {job.phases && job.phases.length > 0 && (
+        <div className={styles.detailSection}>
+          <h4 className={styles.sectionTitle}>Phases</h4>
+          <div className={styles.phasesList}>
+            {job.phases.map((phase) => (
+              <div
+                key={phase.id}
+                className={`${styles.phaseItem} ${
+                  phase.status === 'completed' ? styles.completed : phase.status === 'in_progress' ? styles.active : ''
+                }`}
+              >
+                <CheckCircle size={16} />
+                <span>{phase.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className={styles.detailSection}>
+        <div className={styles.sectionHeader}>
+          <h4 className={styles.sectionTitle}>Tasks ({job.tasks?.filter((t) => t.completed).length || 0}/{job.tasks?.length || 0})</h4>
+        </div>
+        <div className={styles.tasksList}>
+          {job.tasks?.map((task) => (
+            <div
+              key={task.id}
+              className={`${styles.taskItem} ${task.completed ? styles.completedTask : ''}`}
+              onClick={() => onToggleTask(task.id)}
+            >
+              <div className={`${styles.checkbox} ${task.completed ? styles.checked : ''}`}>
+                {task.completed && <CheckCircle size={14} />}
+              </div>
+              <span>{task.title}</span>
+              {task.dueDate && <span className={styles.taskDue}>{task.dueDate}</span>}
+            </div>
+          ))}
+          {(!job.tasks || job.tasks.length === 0) && (
+            <p className={styles.emptyText}>No tasks yet</p>
+          )}
+        </div>
+      </div>
+
+      <div className={styles.detailSection}>
+        <div className={styles.sectionHeader}>
+          <h4 className={styles.sectionTitle}>Notes</h4>
+          <button className={styles.addBtn} onClick={() => setShowNoteInput(true)}>
+            <Plus size={14} /> Add
+          </button>
+        </div>
+        <div className={styles.notesList}>
+          {job.notes?.map((note) => (
+            <div key={note.id} className={styles.noteItem}>
+              <p>{note.content}</p>
+              <span>{note.date}</span>
+            </div>
+          ))}
+          {(!job.notes || job.notes.length === 0) && (
+            <p className={styles.emptyText}>No notes yet</p>
+          )}
+        </div>
+      </div>
+
+      <div className={styles.detailSection}>
+        <h4 className={styles.sectionTitle}>Photos</h4>
+        <div className={styles.photoPlaceholder}>
+          <Image size={24} />
+          <span>Photo gallery coming soon</span>
+        </div>
+      </div>
+
+      <div className={styles.detailActions}>
+        <select
+          className={styles.statusSelect}
+          value={job.status}
+          onChange={(e) => onStatusChange(e.target.value)}
+        >
+          {JOB_STATUSES.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.label}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   );

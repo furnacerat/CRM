@@ -1,12 +1,12 @@
 :root {
-  /* Layered Dark Surfaces */
+  /* Layered Dark Surfaces - increased contrast */
   --bg-primary: #0A0A0D;
-  --bg-page: #0C0C10;
-  --bg-secondary: #111115;
-  --bg-card: #16161A;
-  --bg-tertiary: #1A1A1F;
-  --bg-elevated: #1F1F25;
-  --bg-surface: #252529;
+  --bg-page: #09090C;
+  --bg-secondary: #0E0E12;
+  --bg-card: #131318;
+  --bg-tertiary: #18181D;
+  --bg-elevated: #1D1D23;
+  --bg-surface: #232328;
   
   /* Subtle gradients for depth */
   --gradient-overlay: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);

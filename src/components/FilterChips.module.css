@@ -1,0 +1,55 @@
+.container {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px;
+  margin: -4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.container::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  transition: all var(--transition-base);
+  z-index: 1;
+}
+
+.chip:hover {
+  color: var(--text-primary);
+}
+
+.active {
+  color: var(--text-inverse);
+}
+
+.activeBg {
+  position: absolute;
+  inset: 0;
+  background: var(--accent-primary);
+  border-radius: var(--radius-full);
+  z-index: -1;
+}
+
+.count {
+  font-size: 0.6875rem;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+}
+
+.active .count {
+  background: rgba(0, 0, 0, 0.2);
+}

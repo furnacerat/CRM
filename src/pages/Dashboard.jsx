@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   DollarSign, 
@@ -5,42 +6,50 @@ import {
   Users, 
   FileText, 
   Clock, 
-  CheckCircle, 
   AlertCircle,
   ArrowRight,
   Plus,
   Calendar,
   Wrench,
-  Zap
+  Zap,
+  Phone,
+  MessageSquare,
+  UserCheck,
 } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import Card, { CardHeader, CardTitle, CardContent, CardFooter } from '../components/Card';
 import Badge from '../components/Badge';
 import Button from '../components/Button';
 import { PageHeader } from '../components/TopHeader';
+import { useCRM } from '../context/CRMContext';
+import { LEAD_STAGES } from '../data/leads';
 import styles from './Dashboard.module.css';
 
-const stats = [
-  { label: 'Revenue', value: '$47,250', trend: 'up', trendValue: '+12.5%', icon: DollarSign },
-  { label: 'Profit', value: '$18,900', trend: 'up', trendValue: '+8.2%', icon: TrendingUp },
-  { label: 'Active Jobs', value: '8', trend: 'up', trendValue: '+2 new', icon: Wrench },
-  { label: 'Open Estimates', value: '12', trend: 'down', trendValue: '-3 this week', icon: FileText },
-];
-
-const recentActivity = [
-  { id: 1, type: 'estimate', title: 'Kitchen Renovation - Smith', amount: '$12,500', status: 'sent', time: '2h ago' },
-  { id: 2, type: 'job', title: 'Bathroom Remodel - Johnson', amount: '$8,200', status: 'in_progress', time: '4h ago' },
-  { id: 3, type: 'invoice', title: 'Deck Project - Williams', amount: '$4,800', status: 'paid', time: 'Yesterday' },
-  { id: 4, type: 'lead', title: 'Garage Door - Brown', amount: null, status: 'new', time: 'Yesterday' },
-];
-
-const reminders = [
-  { id: 1, title: 'Call John Smith re: estimate', type: 'call', time: '10:00 AM' },
-  { id: 2, title: 'Materials pickup - Home Depot', type: 'task', time: '2:00 PM' },
-  { id: 3, title: 'Site visit - Johnson Residence', type: 'visit', time: '3:30 PM' },
-];
-
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const { leads, customers, getOverdueFollowUps, getTodaysFollowUps, loading } = useCRM();
+
+  if (loading) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.container}>Loading...</div>
+      </div>
+    );
+  }
+
+  const overdueFollowUps = getOverdueFollowUps();
+  const todaysFollowUps = getTodaysFollowUps();
+  const recentLeads = leads.slice(0, 5);
+  const newLeads = leads.filter((l) => l.stage === 'new').length;
+  const sentEstimates = leads.filter((l) => l.stage === 'sent').length;
+
+  const stats = [
+    { label: 'Total Leads', value: leads.length, trend: 'up', trendValue: `${newLeads} new`, icon: Users },
+    { label: 'Active', value: leads.filter((l) => !['won', 'lost'].includes(l.stage)).length, icon: UserCheck },
+    { label: 'Follow-ups', value: overdueFollowUps.length + todaysFollowUps.length, trend: overdueFollowUps.length > 0 ? 'down' : 'up', trendValue: overdueFollowUps.length > 0 ? 'overdue' : 'on track', icon: Clock },
+    { label: 'Customers', value: customers.length, trend: 'up', trendValue: '+ this month', icon: UserCheck },
+  ];
+
   return (
     <div className={styles.page}>
       <div className={styles.container}>
@@ -48,7 +57,7 @@ export default function Dashboard() {
           title="Dashboard" 
           subtitle="Welcome back, here's what's happening today."
         >
-          <Button icon={Plus}>New Job</Button>
+          <Button icon={Plus} onClick={() => navigate('/leads')}>Add Lead</Button>
         </PageHeader>
         
         <div className={styles.stats}>
@@ -73,24 +82,65 @@ export default function Dashboard() {
           >
             <Card>
               <CardHeader>
-                <CardTitle>Today's Priorities</CardTitle>
+                <CardTitle>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Clock size={18} />
+                    Follow-Ups
+                  </span>
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className={styles.reminderList}>
-                  {reminders.map((reminder) => (
-                    <div key={reminder.id} className={styles.reminderItem}>
-                      <div className={styles.reminderTime}>
-                        <Clock size={14} />
-                        <span>{reminder.time}</span>
+                {(overdueFollowUps.length === 0 && todaysFollowUps.length === 0) ? (
+                  <div className={styles.emptyState}>
+                    <AlertCircle size={24} />
+                    <p>All caught up!</p>
+                  </div>
+                ) : (
+                  <div className={styles.reminderList}>
+                    {overdueFollowUps.map((lead) => (
+                      <div key={lead.id} className={styles.followUpItem}>
+                        <div className={styles.followUpDot} style={{ background: 'var(--status-error)' }} />
+                        <div className={styles.followUpInfo}>
+                          <span className={styles.followUpTitle}>{lead.name}</span>
+                          <span className={styles.followUpMeta}>
+                            {lead.projectType} · Was due {new Date(lead.followUpDate).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className={styles.followUpActions}>
+                          <a href={`tel:${lead.phone}`} className={styles.followUpBtn}>
+                            <Phone size={14} />
+                          </a>
+                          <a href={`sms:${lead.phone}`} className={styles.followUpBtn}>
+                            <MessageSquare size={14} />
+                          </a>
+                        </div>
                       </div>
-                      <div className={styles.reminderTitle}>{reminder.title}</div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                    {todaysFollowUps.map((lead) => (
+                      <div key={lead.id} className={styles.followUpItem}>
+                        <div className={styles.followUpDot} style={{ background: 'var(--accent-primary)' }} />
+                        <div className={styles.followUpInfo}>
+                          <span className={styles.followUpTitle}>{lead.name}</span>
+                          <span className={styles.followUpMeta}>
+                            {lead.projectType} · Today
+                          </span>
+                        </div>
+                        <div className={styles.followUpActions}>
+                          <a href={`tel:${lead.phone}`} className={styles.followUpBtn}>
+                            <Phone size={14} />
+                          </a>
+                          <a href={`sms:${lead.phone}`} className={styles.followUpBtn}>
+                            <MessageSquare size={14} />
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
               <CardFooter>
-                <Button variant="ghost" size="sm" fullWidth>
-                  View Schedule <ArrowRight size={16} />
+                <Button variant="ghost" size="sm" fullWidth onClick={() => navigate('/leads')}>
+                  View All Leads <ArrowRight size={16} />
                 </Button>
               </CardFooter>
             </Card>
@@ -104,40 +154,39 @@ export default function Dashboard() {
           >
             <Card>
               <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
+                <CardTitle>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Users size={18} />
+                    Recent Leads
+                  </span>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className={styles.activityList}>
-                  {recentActivity.map((item) => (
-                    <div key={item.id} className={styles.activityItem}>
-                      <div className={styles.activityIcon}>
-                        {item.type === 'estimate' && <FileText size={16} />}
-                        {item.type === 'job' && <Wrench size={16} />}
-                        {item.type === 'invoice' && <DollarSign size={16} />}
-                        {item.type === 'lead' && <Users size={16} />}
-                      </div>
-                      <div className={styles.activityContent}>
-                        <div className={styles.activityTitle}>{item.title}</div>
-                        <div className={styles.activityMeta}>
-                          {item.amount && <span>{item.amount}</span>}
-                          <span>{item.time}</span>
+                  {recentLeads.map((lead) => {
+                    const stage = LEAD_STAGES.find((s) => s.id === lead.stage);
+                    return (
+                      <div key={lead.id} className={styles.leadItem} onClick={() => navigate('/leads')}>
+                        <div className={styles.leadAvatar}>
+                          {lead.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
                         </div>
+                        <div className={styles.leadInfo}>
+                          <span className={styles.leadName}>{lead.name}</span>
+                          <span className={styles.leadMeta}>{lead.projectType}</span>
+                        </div>
+                        <Badge variant={stage?.color || 'default'} size="sm">
+                          {stage?.label}
+                        </Badge>
                       </div>
-                      <Badge 
-                        variant={
-                          item.status === 'paid' ? 'success' : 
-                          item.status === 'new' ? 'accent' :
-                          item.status === 'sent' ? 'info' :
-                          'warning'
-                        }
-                        size="sm"
-                      >
-                        {item.status.replace('_', ' ')}
-                      </Badge>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </CardContent>
+              <CardFooter>
+                <Button variant="ghost" size="sm" fullWidth onClick={() => navigate('/leads')}>
+                  View All Leads <ArrowRight size={16} />
+                </Button>
+              </CardFooter>
             </Card>
           </motion.div>
         </div>
@@ -153,19 +202,19 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className={styles.actionGrid}>
-                <button className={styles.actionButton}>
+                <button className={styles.actionButton} onClick={() => navigate('/leads')}>
                   <Zap size={22} />
+                  <span>New Lead</span>
+                </button>
+                <button className={styles.actionButton} onClick={() => navigate('/estimates')}>
+                  <FileText size={22} />
                   <span>New Estimate</span>
                 </button>
-                <button className={styles.actionButton}>
-                  <FileText size={22} />
-                  <span>Create Invoice</span>
-                </button>
-                <button className={styles.actionButton}>
+                <button className={styles.actionButton} onClick={() => navigate('/customers')}>
                   <Users size={22} />
-                  <span>Add Lead</span>
+                  <span>Customers</span>
                 </button>
-                <button className={styles.actionButton}>
+                <button className={styles.actionButton} onClick={() => navigate('/jobs')}>
                   <Calendar size={22} />
                   <span>Schedule</span>
                 </button>

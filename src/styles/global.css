@@ -1,10 +1,19 @@
 :root {
+  /* Layered Dark Surfaces */
   --bg-primary: #0A0A0D;
-  --bg-secondary: #121216;
-  --bg-tertiary: #18181E;
-  --bg-elevated: #1E1E24;
-  --bg-surface: #222229;
+  --bg-page: #0C0C10;
+  --bg-secondary: #111115;
+  --bg-card: #16161A;
+  --bg-tertiary: #1A1A1F;
+  --bg-elevated: #1F1F25;
+  --bg-surface: #252529;
   
+  /* Subtle gradients for depth */
+  --gradient-overlay: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
+  --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%);
+  --gradient-glow: radial-gradient(ellipse at center, rgba(245, 158, 11, 0.08) 0%, transparent 70%);
+  
+  /* Accent Colors */
   --accent-primary: #F59E0B;
   --accent-primary-hover: #FBBF24;
   --accent-primary-muted: rgba(245, 158, 11, 0.15);
@@ -12,16 +21,20 @@
   --accent-secondary-hover: #60A5FA;
   --accent-secondary-muted: rgba(59, 130, 246, 0.15);
   
+  /* Text Colors */
   --text-primary: #FAFAFA;
   --text-secondary: #A1A1AA;
   --text-muted: #71717A;
   --text-inverse: #0A0A0D;
   
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-default: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.16);
-  --border-accent: rgba(245, 158, 11, 0.4);
+  /* Border Colors */
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-default: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --border-accent: rgba(245, 158, 11, 0.3);
+  --border-glow: rgba(245, 158, 11, 0.15);
   
+  /* Status Colors */
   --status-success: #22C55E;
   --status-success-bg: rgba(34, 197, 94, 0.12);
   --status-warning: #EAB308;
@@ -31,32 +44,36 @@
   --status-info: #3B82F6;
   --status-info-bg: rgba(59, 130, 246, 0.12);
   
-  --glow-accent: rgba(245, 158, 11, 0.25);
-  --glow-blue: rgba(59, 130, 246, 0.25);
+  /* Glows */
+  --glow-accent: rgba(245, 158, 11, 0.2);
+  --glow-blue: rgba(59, 130, 246, 0.2);
+  --glow-success: rgba(34, 197, 94, 0.2);
   
+  /* Typography */
   --font-sans: "Outfit", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
   
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-base: 0 2px 8px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.6);
-  --shadow-glow: 0 0 20px rgba(245, 158, 11, 0.2);
+  /* Shadows - Enhanced for depth */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-base: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.7), 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  --shadow-glow: 0 0 24px rgba(245, 158, 11, 0.15);
+  --shadow-inner: 0 2px 4px rgba(0, 0, 0, 0.3) inset;
   
-  --radius-sm: 4px;
-  --radius-md: 8px;
+  /* Border Radius */
+  --radius-sm: 6px;
   --radius-md: 10px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-2xl: 20px;
-  --radius-3xl: 24px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 22px;
+  --radius-3xl: 28px;
   --radius-full: 9999px;
   
+  /* Transitions */
   --transition-fast: 120ms ease;
   --transition-base: 200ms ease;
-  --transition-fast: 120ms ease;
-  --transition-slow: 300ms ease;
   --transition-slow: 300ms ease;
   --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -76,13 +93,15 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background: var(--bg-primary);
+  background: var(--bg-page);
   color: var(--text-primary);
   line-height: 1.5;
   min-height: 100vh;
   min-height: 100dvh;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
+  /* Subtle radial gradient for depth */
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(30, 30, 40, 0.4) 0%, var(--bg-page) 60%);
 }
 
 #root {
@@ -128,12 +147,12 @@ img {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 ::selection {

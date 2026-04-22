@@ -12,6 +12,9 @@
   padding: 0 8px;
   padding-bottom: env(safe-area-inset-bottom, 8px);
   z-index: 30;
+  /* Depth effect */
+  background-image: linear-gradient(180deg, var(--bg-secondary) 0%, rgba(18,18,22,0.98) 100%);
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.4);
 }
 
 .item {

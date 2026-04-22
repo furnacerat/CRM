@@ -10,6 +10,9 @@
   top: 0;
   z-index: 30;
   transition: width var(--transition-slow);
+  /* Subtle depth */
+  background-image: linear-gradient(180deg, var(--bg-secondary) 0%, rgba(18,18,22,0.95) 100%);
+  box-shadow: 4px 0 24px rgba(0,0,0,0.3);
 }
 
 .collapsed {

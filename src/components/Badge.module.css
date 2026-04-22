@@ -4,6 +4,8 @@
   font-weight: 500;
   border-radius: var(--radius-full);
   white-space: nowrap;
+  /* Subtle depth */
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.03) inset;
 }
 
 .sm {
@@ -32,26 +34,31 @@
 .success {
   background: var(--status-success-bg);
   color: var(--status-success);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.15);
 }
 
 .warning {
   background: var(--status-warning-bg);
   color: var(--status-warning);
+  box-shadow: 0 0 8px rgba(234, 179, 8, 0.15);
 }
 
 .error {
   background: var(--status-error-bg);
   color: var(--status-error);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.15);
 }
 
 .info {
   background: var(--status-info-bg);
   color: var(--status-info);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.15);
 }
 
 .accent {
   background: var(--accent-primary-muted);
   color: var(--accent-primary);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.15);
 }
 
 .dot {

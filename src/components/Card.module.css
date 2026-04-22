@@ -1,23 +1,41 @@
 .card {
-  background: var(--bg-secondary);
+  background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
   transition: all var(--transition-base);
+  /* Subtle gradient for depth */
+  background-image: var(--gradient-card);
+  /* Inner glow effect */
+  box-shadow: var(--shadow-base), 0 0 0 1px rgba(255,255,255,0.02) inset;
+  position: relative;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  border-radius: var(--radius-xl);
+  pointer-events: none;
 }
 
 .default {
-  background: var(--bg-secondary);
+  background: var(--bg-card);
 }
 
 .elevated {
   background: var(--bg-elevated);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md), 0 0 0 1px rgba(255,255,255,0.02) inset;
 }
 
 .glass {
-  background: rgba(18, 18, 22, 0.8);
+  background: rgba(22, 22, 26, 0.85);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-lg);
 }
 
 .paddingNone {
@@ -25,7 +43,7 @@
 }
 
 .paddingSm {
-  padding: 12px;
+  padding: 14px;
 }
 
 .paddingMd {

@@ -183,6 +183,22 @@ function LeadCard({ lead, onClick, onStageChange }) {
 
   const followUpClass = isOverdue ? styles.urgent : isDueSoon ? styles.soon : '';
 
+  const getNextAction = () => {
+    if (isOverdue) return { icon: AlertCircle, text: 'Call overdue follow-up', hint: 'Now' };
+    switch (lead.stage) {
+      case 'new': return { icon: Phone, text: 'Initial contact', hint: 'Today' };
+      case 'contacted': return { icon: Calendar, text: 'Schedule estimate', hint: 'This week' };
+      case 'scheduled': return { icon: FileText, text: 'Send estimate', hint: 'Today' };
+      case 'sent': return { icon: MessageSquare, text: 'Follow up on estimate', hint: '2-3 days' };
+      case 'followup': return { icon: CheckCircle, text: 'Close as won/lost', hint: 'This week' };
+      case 'won': return { icon: Star, text: 'Start job', hint: 'Next step' };
+      default: return { icon: ChevronRight, text: 'Continue', hint: '' };
+    }
+  };
+
+  const nextAction = getNextAction();
+  const NextActionIcon = nextAction.icon;
+
   return (
     <Card className={`${styles.leadCard} ${priority !== 'normal' ? styles[priority] : ''}`} onClick={onClick}>
       {priority !== 'normal' && (
@@ -203,6 +219,12 @@ function LeadCard({ lead, onClick, onStageChange }) {
         <span className={`${styles.leadStatus} ${lead.stage}`}>
           {stage?.label}
         </span>
+      </div>
+
+      <div className={`${styles.nextAction} ${isOverdue ? styles.urgent : ''}`}>
+        <NextActionIcon className={styles.nextActionIcon} size={16} />
+        <span className={styles.nextActionText}>{nextAction.text}</span>
+        {nextAction.hint && <span className={styles.nextActionHint}>{nextAction.hint}</span>}
       </div>
 
       {lead.followUpDate && (
@@ -240,19 +262,21 @@ function LeadCard({ lead, onClick, onStageChange }) {
         </a>
       </div>
 
-      <div className={styles.quickStage}>
-        {LEAD_STAGES.filter((s) => s.id !== lead.stage).slice(0, 3).map((s) => (
-          <button
-            key={s.id}
-            className={styles.quickStageBtn}
-            onClick={(e) => {
-              e.stopPropagation();
-              onStageChange(s.id);
-            }}
-          >
-            {s.label}
-          </button>
-        ))}
+      <div className={styles.stageControl}>
+        <span className={styles.stageLabel}>Stage</span>
+        <select 
+          className={styles.stageSelect}
+          value={lead.stage}
+          onChange={(e) => {
+            e.stopPropagation();
+            onStageChange(e.target.value);
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {LEAD_STAGES.map((s) => (
+            <option key={s.id} value={s.id}>{s.label}</option>
+          ))}
+        </select>
       </div>
     </Card>
   );

@@ -119,6 +119,7 @@
   cursor: pointer;
   transition: all var(--transition-base);
   position: relative;
+  padding: 20px;
 }
 
 .leadCard:hover {
@@ -289,21 +290,21 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 10px;
-  padding: 8px 12px;
+  margin-top: 14px;
+  padding: 10px 14px;
   background: rgba(255, 255, 255, 0.02);
   border-radius: var(--radius-md);
   border-left: 3px solid var(--border-subtle);
 }
 
 .followUpSection.urgent {
-  background: rgba(239, 68, 68, 0.08);
-  border-left-color: var(--status-error);
+  background: rgba(239, 68, 68, 0.05);
+  border-left-color: rgba(239, 68, 68, 0.4);
 }
 
 .followUpSection.soon {
-  background: rgba(234, 179, 8, 0.08);
-  border-left-color: var(--status-warning);
+  background: rgba(234, 179, 8, 0.05);
+  border-left-color: rgba(234, 179, 8, 0.4);
 }
 
 .followUpIcon {
@@ -354,42 +355,97 @@
   border-top: 1px solid var(--border-subtle);
 }
 
-/* Quick Stage Change */
-.quickStage {
+/* Quick Stage Control - Single streamlined control */
+.stageControl {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 12px;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
 }
 
-.quickStageBtn {
-  padding: 6px 12px;
+.stageLabel {
   font-size: 0.75rem;
   font-weight: 500;
   color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stageSelect {
+  flex: 1;
+  padding: 10px 14px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
-}
-
-.quickStageBtn:hover {
-  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
   color: var(--text-primary);
-  border-color: var(--border-default);
-  transform: translateY(-1px);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
 }
 
-.quickStageBtn.active {
-  background: var(--accent-primary);
+.stageSelect:hover {
+  border-color: var(--border-default);
+  background-color: var(--bg-surface);
+}
+
+.stageSelect:focus {
+  outline: none;
   border-color: var(--accent-primary);
-  color: var(--text-inverse);
+  box-shadow: 0 0 0 3px var(--accent-primary-muted);
+}
+
+/* Next Action Guidance */
+.nextAction {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.04) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: var(--radius-lg);
+}
+
+.nextAction.urgent {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(239, 68, 68, 0.04) 100%);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.nextActionIcon {
+  width: 18px;
+  height: 18px;
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.nextAction.urgent .nextActionIcon {
+  color: var(--status-error);
+}
+
+.nextActionText {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.nextActionHint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-left: auto;
 }
 
 /* Refined Action Buttons */
 .actionBtn {
   flex: 1;
-  height: 40px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;

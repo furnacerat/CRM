@@ -66,12 +66,27 @@
 
 .content {
   flex: 1;
-  padding: 20px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Full-screen drawer for mobile */
+.drawer.fullscreen {
+  max-width: 100%;
 }
 
 @media (min-width: 640px) {
   .drawer {
-    max-width: 420px;
+    max-width: 480px;
+  }
+  
+  .drawer.fullscreen {
+    max-width: 520px;
+    border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+    margin: 16px 0;
+    height: calc(100vh - 32px);
+    top: 16px;
+    bottom: 16px;
   }
 }

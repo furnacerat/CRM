@@ -8,15 +8,15 @@ export default function StatCard({
   trend,
   trendValue,
   icon: Icon,
-  variant = 'default',
+  highlight = false,
   className = ''
 }) {
   const TrendIcon = trend === 'up' ? TrendingUp : trend === 'down' ? TrendingDown : Minus;
-  const trendColor = trend === 'up' ? 'up' : trend === 'down' ? 'down' : 'neutral';
+  const trendClass = trend === 'up' ? styles.up : trend === 'down' ? styles.down : styles.neutral;
   
   return (
     <motion.div 
-      className={`${styles.card} ${styles[variant]} ${className}`}
+      className={`${styles.card} ${highlight ? styles.highlight : ''} ${className}`}
       whileHover={{ y: -2 }}
       transition={{ duration: 0.2 }}
     >
@@ -24,9 +24,11 @@ export default function StatCard({
         <span className={styles.label}>{label}</span>
         {Icon && <Icon className={styles.icon} />}
       </div>
-      <div className={styles.value}>{value}</div>
+      <div className={`${styles.value} ${highlight ? styles.highlight : ''}`}>
+        {value}
+      </div>
       {trend && (
-        <div className={`${styles.trend} ${styles[trendColor]}`}>
+        <div className={`${styles.trend} ${trendClass}`}>
           <TrendIcon className={styles.trendIcon} />
           <span>{trendValue}</span>
         </div>

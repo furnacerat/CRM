@@ -429,7 +429,7 @@
   gap: 10px;
 }
 
-/* View */
+/* View - Base */
 .view {
   display: flex;
   flex-direction: column;
@@ -453,79 +453,221 @@
 .internalBadge {
   text-align: center;
   padding: 6px 12px;
-  background: var(--status-warning-bg);
-  color: var(--status-warning);
+  background: rgba(234, 179, 8, 0.15);
+  color: #EAB308;
   font-size: 0.75rem;
   font-weight: 600;
   border-radius: var(--radius-full);
   margin-bottom: 16px;
 }
 
-.viewSection {
-  margin-bottom: 20px;
+/* Internal View - Analytical/Tool */
+.internal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 24px;
 }
 
-.viewSection h4 {
-  font-size: 0.8125rem;
+.internal .viewHeader h2 {
+  font-size: 1.125rem;
+}
+
+.internalBadge {
+  background: rgba(234, 179, 8, 0.15);
+  color: #EAB308;
+  display: inline-block;
+}
+
+.internal .viewSection {
+  margin-bottom: 24px;
+}
+
+.internal .viewSection h4 {
+  font-size: 0.6875rem;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 12px;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-.viewTable {
+.internal .viewTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.internal .viewTable th,
+.internal .viewTable td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.internal .viewTable th {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+}
+
+.internal .viewTable td {
+  color: var(--text-primary);
+}
+
+.internal .viewTable td:nth-child(2),
+.internal .viewTable td:nth-child(3) {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.internal .viewTable tr.cost-row td {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.internal .viewTable tr.margin-row td {
+  color: var(--status-success);
+  font-weight: 600;
+}
+
+.internal .viewTable tfoot td {
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.03);
+  border-top: 2px solid var(--border-default);
+}
+
+.internal .viewTable tfoot td:last-child {
+  font-size: 1rem;
+}
+
+.internal .viewTotal {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: var(--radius-lg);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+/* Client View - Polished Proposal */
+.client {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+}
+
+.client .viewHeader {
+  margin-bottom: 32px;
+}
+
+.client .viewHeader h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.client .viewHeader p {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.clientBadge {
+  display: inline-block;
+  padding: 6px 12px;
+  background: var(--status-success-bg);
+  color: var(--status-success);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-full);
+  margin-bottom: 16px;
+}
+
+.client .viewSection {
+  margin-bottom: 32px;
+}
+
+.client .viewSection h4 {
+  display: none;
+}
+
+.client .viewTable {
   width: 100%;
   border-collapse: collapse;
 }
 
-.viewTable th,
-.viewTable td {
-  padding: 10px 8px;
+.client .viewTable th,
+.client .viewTable td {
+  padding: 14px 12px;
   text-align: left;
+  font-size: 0.9375rem;
+}
+
+.client .viewTable th {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.8125rem;
   border-bottom: 1px solid var(--border-subtle);
-  font-size: 0.875rem;
 }
 
-.viewTable th {
-  color: var(--text-muted);
-  font-weight: 500;
+.client .viewTable td {
+  color: var(--text-primary);
 }
 
-.viewTable td:last-child {
+.client .viewTable td:last-child {
   text-align: right;
-  font-weight: 500;
-}
-
-.viewTable tfoot td {
   font-weight: 600;
-  background: var(--bg-tertiary);
 }
 
-.optionalNote {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  font-style: italic;
+.client .viewTable tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
 }
 
-.viewTotal {
+.client .viewTable tfoot td {
+  padding: 20px;
+  background: transparent;
+  border-top: 2px solid var(--border-default);
+}
+
+.client .viewTotal {
   display: flex;
   justify-content: space-between;
-  padding: 16px;
+  padding: 24px;
   background: var(--accent-primary);
   border-radius: var(--radius-lg);
-  font-size: 1.125rem;
+  font-size: 1.375rem;
   font-weight: 700;
   color: var(--text-inverse);
-  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.25);
+  margin-bottom: 24px;
 }
 
-.viewFooter {
+.client .optionalNote {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+  padding: 16px 0;
+}
+
+.client .viewFooter {
   text-align: center;
   color: var(--text-muted);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   margin-top: auto;
-  padding-top: 20px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border-subtle);
 }
 
 @media (min-width: 640px) {

@@ -212,6 +212,74 @@
   transition: width var(--transition-base);
 }
 
+/* Financials Section */
+.financials {
+  margin: 16px 0;
+  padding: 20px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+}
+
+.financialsTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+}
+
+.financialsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.financialItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.financialLabel {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.financialValue {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.financialValue.highlight {
+  color: var(--accent-primary);
+  text-shadow: 0 0 16px var(--glow-accent-subtle);
+}
+
+.financialValue.profit {
+  font-size: 1.25rem;
+}
+
+.financialValue.healthy {
+  color: var(--status-success);
+}
+
+.financialValue.tight {
+  color: var(--status-warning);
+}
+
+.financialValue.risk {
+  color: var(--status-error);
+}
+
 /* Builder */
 .builder {
   display: flex;

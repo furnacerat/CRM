@@ -2,23 +2,18 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  Search,
-  Plus,
-  Wrench,
   Calendar,
-  Clock,
   CheckCircle,
+  Clock,
   MoreVertical,
-  ChevronRight,
-  MapPin,
-  DollarSign,
-  Users,
-  ArrowRight,
-  X,
+  Plus,
+  Search,
+  ArrowLeft,
   Image,
   FileText,
   Edit,
-  Trash2,
+  DollarSign,
+  TrendingUp,
 } from 'lucide-react';
 import { PageHeader } from '../components/TopHeader';
 import Card from '../components/Card';
@@ -404,6 +399,50 @@ function JobDetail({ job, onToggleTask, onStatusChange }) {
     <div className={styles.detail}>
       <div className={styles.detailHeader}>
         <Badge variant={getStatusInfo(job.status).color}>{getStatusInfo(job.status).label}</Badge>
+      </div>
+
+      <div className={styles.financials}>
+        <div className={styles.financialsTitle}>
+          <DollarSign size={14} />
+          Financials
+        </div>
+        <div className={styles.financialsGrid}>
+          <div className={styles.financialItem}>
+            <span className={styles.financialLabel}>Contract Value</span>
+            <span className={styles.financialValue}>
+              ${(job.contractAmount || 0).toLocaleString()}
+            </span>
+          </div>
+          <div className={styles.financialItem}>
+            <span className={styles.financialLabel}>Est. Cost</span>
+            <span className={styles.financialValue}>
+              ${(job.estimatedCost || Math.round((job.contractAmount || 0) * 0.7)).toLocaleString()}
+            </span>
+          </div>
+          <div className={styles.financialItem}>
+            <span className={styles.financialLabel}>Actual Cost</span>
+            <span className={styles.financialValue} style={{ opacity: 0.6 }}>
+              ${(job.actualCost || Math.round((job.contractAmount || 0) * 0.65)).toLocaleString()}
+            </span>
+          </div>
+          {(() => {
+            const revenue = job.contractAmount || 0;
+            const cost = job.actualCost || Math.round(revenue * 0.65);
+            const profit = revenue - cost;
+            const margin = revenue > 0 ? (profit / revenue) * 100 : 0;
+            let health = 'healthy';
+            if (margin < 10) health = 'risk';
+            else if (margin < 20) health = 'tight';
+          return (
+          <div className={styles.financialItem}>
+            <span className={styles.financialLabel}>Profit</span>
+            <span className={`${styles.financialValue} ${styles.profit} ${styles[health]}`}>
+              ${Math.round(profit).toLocaleString()} ({Math.round(margin)}%)
+            </span>
+          </div>
+          );
+          })()}
+        </div>
       </div>
 
       <div className={styles.detailSection}>

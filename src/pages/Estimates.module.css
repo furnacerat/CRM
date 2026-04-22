@@ -530,19 +530,39 @@
 }
 
 .internal .viewSection {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
+  padding: 20px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+}
+
+.internal .viewSection.materials {
+  border-left: 3px solid #6366F1;
+}
+
+.internal .viewSection.labor {
+  border-left: 3px solid #EC4899;
+}
+
+.internal .viewSection.profit {
+  border-left: 3px solid var(--status-success);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, var(--bg-tertiary) 50%);
 }
 
 .internal .viewSection h4 {
   font-size: 0.6875rem;
-  font-weight: 600;
-  color: var(--text-muted);
+  font-weight: 700;
+  color: var(--text-primary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin-bottom: 8px;
-  padding-bottom: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--border-subtle);
 }
+
+.internal .viewSection.materials h4 { color: #818CF8; }
+.internal .viewSection.labor h4 { color: #F472B6; }
+.internal .viewSection.profit h4 { color: var(--status-success); }
 
 .internal .viewTable {
   width: 100%;
@@ -552,7 +572,7 @@
 
 .internal .viewTable th,
 .internal .viewTable td {
-  padding: 8px 10px;
+  padding: 10px 12px;
   text-align: left;
   border-bottom: 1px solid var(--border-subtle);
 }
@@ -572,17 +592,23 @@
 .internal .viewTable td:nth-child(3) {
   text-align: right;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
 }
 
 .internal .viewTable tr.cost-row td {
   color: var(--text-secondary);
-  font-size: 0.75rem;
+}
+
+.internal .viewTable tr.profit-row td {
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .internal .viewTable tr.margin-row td {
   color: var(--status-success);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1.125rem;
+  text-shadow: 0 0 12px var(--glow-success);
 }
 
 .internal .viewTable tfoot td {
@@ -592,19 +618,29 @@
 }
 
 .internal .viewTable tfoot td:last-child {
-  font-size: 1rem;
+  font-size: 1.125rem;
 }
 
 .internal .viewTotal {
   display: flex;
   justify-content: space-between;
-  padding: 16px 20px;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  align-items: center;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.3);
   border-radius: var(--radius-lg);
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--accent-primary);
+  box-shadow: 0 0 24px var(--glow-accent-subtle);
+}
+
+.internal .viewTotalLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* Client View - Polished Proposal */

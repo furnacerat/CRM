@@ -583,6 +583,8 @@ function EstimateDetail({ estimate, onStatusChange, onClose }) {
 function EstimateView({ estimate, mode }) {
   const totalCost = estimate.items?.reduce((sum, i) => sum + (i.unitCost || 0) * (i.quantity || 1), 0) || 0;
   const totalSell = estimate.totalSell || 0;
+  const materialsCost = estimate.items?.filter(i => i.category !== 'labor').reduce((sum, i) => sum + (i.unitCost || 0) * (i.quantity || 1), 0) || 0;
+  const laborCost = estimate.items?.filter(i => i.category === 'labor').reduce((sum, i) => sum + (i.unitCost || 0) * (i.quantity || 1), 0) || 0;
 
   return (
     <div className={styles.view}>
@@ -595,56 +597,93 @@ function EstimateView({ estimate, mode }) {
         <div className={styles.internalBadge}>Internal View</div>
       )}
 
-      <div className={styles.viewSection}>
-        <h4>Items</h4>
-        <table className={styles.viewTable}>
-          <thead>
-            <tr>
-              <th>Description</th>
-              {mode === 'internal' && <th>Cost</th>}
-              <th>Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            {estimate.items?.map((item, i) => (
-              <tr key={i}>
-                <td>
-                  {item.name}
-                  {item.optional && <span className={styles.optionalNote}> (optional)</span>}
-                </td>
-                {mode === 'internal' && (
-                  <td>${((item.unitCost || 0) * (item.quantity || 1)).toLocaleString()}</td>
-                )}
-                <td>${((item.sellPrice || 0) * (item.quantity || 1)).toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-          {mode === 'internal' && (
-            <tfoot>
+      {mode === 'internal' ? (
+        <>
+          <div className={`${styles.viewSection} ${styles.materials}`}>
+            <h4>Materials</h4>
+            <table className={styles.viewTable}>
+              <tbody>
+                {estimate.items?.filter(i => i.category !== 'labor').map((item, i) => (
+                  <tr key={i}>
+                    <td>{item.name}</td>
+                    <td>${((item.unitCost || 0) * (item.quantity || 1)).toLocaleString()}</td>
+                    <td>${((item.sellPrice || 0) * (item.quantity || 1)).toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className={`${styles.viewSection} ${styles.labor}`}>
+            <h4>Labor</h4>
+            <table className={styles.viewTable}>
+              <tbody>
+                {estimate.items?.filter(i => i.category === 'labor').map((item, i) => (
+                  <tr key={i}>
+                    <td>{item.name}</td>
+                    <td>${((item.unitCost || 0) * (item.quantity || 1)).toLocaleString()}</td>
+                    <td>${((item.sellPrice || 0) * (item.quantity || 1)).toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className={`${styles.viewSection} ${styles.profit}`}>
+            <h4>Profit Analysis</h4>
+            <table className={styles.viewTable}>
+              <tbody>
+                <tr className={styles.costRow}>
+                  <td>Total Materials Cost</td>
+                  <td></td>
+                  <td>${materialsCost.toLocaleString()}</td>
+                </tr>
+                <tr className={styles.costRow}>
+                  <td>Total Labor Cost</td>
+                  <td></td>
+                  <td>${laborCost.toLocaleString()}</td>
+                </tr>
+                <tr className={styles.profitRow}>
+                  <td>Gross Profit</td>
+                  <td></td>
+                  <td>${(totalSell - totalCost).toLocaleString()}</td>
+                </tr>
+                <tr className={styles.marginRow}>
+                  <td>Profit Margin</td>
+                  <td></td>
+                  <td>{totalCost > 0 ? Math.round(((totalSell - totalCost) / totalSell) * 100) : 0}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </>
+      ) : (
+        <div className={styles.viewSection}>
+          <h4>Items</h4>
+          <table className={styles.viewTable}>
+            <thead>
               <tr>
-                <td>Total Cost</td>
-                <td>${totalCost.toLocaleString()}</td>
-                <td></td>
+                <th>Description</th>
+                <th>Price</th>
               </tr>
-              <tr>
-                <td>Profit</td>
-                <td>${(totalSell - totalCost).toLocaleString()}</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Margin</td>
-                <td>
-                  {totalCost > 0 ? Math.round(((totalSell - totalCost) / totalSell) * 100) : 0}%
-                </td>
-                <td></td>
-              </tr>
-            </tfoot>
-          )}
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {estimate.items?.map((item, i) => (
+                <tr key={i}>
+                  <td>
+                    {item.name}
+                    {item.optional && <span className={styles.optionalNote}> (optional)</span>}
+                  </td>
+                  <td>${((item.sellPrice || 0) * (item.quantity || 1)).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <div className={styles.viewTotal}>
-        <span>Total</span>
+        <span className={styles.viewTotalLabel}>Total</span>
         <span>${totalSell.toLocaleString()}</span>
       </div>
 

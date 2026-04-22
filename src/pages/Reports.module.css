@@ -4,55 +4,160 @@
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
-.statsRow {
+.periodTabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 4px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-full);
+  width: fit-content;
+}
+
+.periodTab {
+  padding: 8px 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-base);
+}
+
+.periodTab:hover {
+  color: var(--text-primary);
+}
+
+.periodTab.active {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+}
+
+.insightGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   margin-bottom: 24px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
+.insightCard {
+  display: flex;
+  align-items: center;
   gap: 16px;
+  padding: 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
 }
 
-.chartPlaceholder {
-  height: 200px;
+.insightIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.insightContent {
   display: flex;
   flex-direction: column;
 }
 
-.chartBars {
-  flex: 1;
+.insightLabel {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.insightValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.insightChange {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
+
+.insightChange.positive {
+  color: var(--status-success);
+}
+
+.insightChange.negative {
+  color: var(--status-error);
+}
+
+.insightMeta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* Charts */
+.chartContainer {
+  height: 200px;
   display: flex;
   align-items: flex-end;
-  gap: 12px;
-  padding-bottom: 12px;
+  padding-top: 20px;
+}
+
+.barChart {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  width: 100%;
+  height: 100%;
+}
+
+.barColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
 }
 
 .bar {
-  flex: 1;
+  width: 48px;
   background: linear-gradient(to top, var(--accent-primary), var(--accent-primary-hover));
   border-radius: 4px 4px 0 0;
-  transition: all var(--transition-base);
+  margin-top: auto;
 }
 
-.chartLabels {
-  display: flex;
-  justify-content: space-between;
+.barLabel {
   font-size: 0.75rem;
   color: var(--text-muted);
 }
 
-.pipeline {
+.barValue {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Pipeline */
+.pipelineStats {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 .pipelineItem {
@@ -68,34 +173,215 @@
 }
 
 .pipelineInfo {
+  flex: 1;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.875rem;
 }
 
-.pipelineStage {
-  font-size: 0.9375rem;
+.pipelineInfo span:first-child {
+  color: var(--text-secondary);
+}
+
+.pipelineInfo span:last-child {
+  font-weight: 600;
+}
+
+.winRateCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: var(--accent-primary-muted);
+  border-radius: var(--radius-lg);
+}
+
+.winRateLabel {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.winRateValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+/* Top Jobs */
+.topJobsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.topJobItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.jobRank {
+  width: 28px;
+  height: 28px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.jobInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.jobName {
+  font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-primary);
 }
 
-.pipelineCount {
-  font-size: 0.8125rem;
+.jobCustomer {
+  font-size: 0.75rem;
   color: var(--text-muted);
 }
 
+.jobValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+/* Invoice Breakdown */
+.invoiceBreakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.invoiceItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.invoiceDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.invoiceItem span:nth-child(2) {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.invoiceItem span:nth-child(3) {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Expense Breakdown */
+.expenseList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.expenseItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.expenseLabel {
+  width: 80px;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  text-transform: capitalize;
+}
+
+.expenseBar {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.expenseFill {
+  height: 100%;
+  background: var(--accent-primary);
+  border-radius: 4px;
+}
+
+.expenseAmount {
+  width: 80px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: right;
+  color: var(--text-primary);
+}
+
+/* Job Stats */
+.jobStats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.jobStatItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+}
+
+.jobStatItem svg {
+  color: var(--text-muted);
+}
+
+.jobStatInfo {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+}
+
+.jobStatInfo span:first-child {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.jobStatValue {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
 @media (max-width: 1024px) {
-  .statsRow {
+  .insightGrid {
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .grid {
+  .mainGrid {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 640px) {
-  .statsRow {
+  .insightGrid {
     grid-template-columns: 1fr;
-    gap: 12px;
+  }
+  
+  .insightCard {
+    padding: 16px;
   }
 }

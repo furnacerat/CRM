@@ -37,7 +37,7 @@
 
 .primary:hover:not(:disabled) {
   background: linear-gradient(135deg, var(--accent-primary-hover) 0%, #F59E0B 100%);
-  box-shadow: var(--shadow-glow), 0 0 20px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.25);
   transform: translateY(-1px);
 }
 

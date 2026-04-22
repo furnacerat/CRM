@@ -15,6 +15,8 @@ import {
   Phone,
   MessageSquare,
   UserCheck,
+  Target,
+  AlertTriangle,
 } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import Card, { CardHeader, CardTitle, CardContent, CardFooter } from '../components/Card';
@@ -59,6 +61,60 @@ export default function Dashboard() {
         >
           <Button icon={Plus} onClick={() => navigate('/leads')}>Add Lead</Button>
         </PageHeader>
+        
+        {/* Today Focus */}
+        <motion.div 
+          className={styles.todayFocus}
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <div className={styles.todayFocusTitle}>
+            <Zap />
+            Today Focus
+          </div>
+          <div className={styles.todayFocusItems}>
+            {overdueFollowUps.length > 0 && (
+              <>
+                <div className={`${styles.focusItem} ${styles.focusItemUrgent}`} onClick={() => navigate('/leads')}>
+                  <Clock className={styles.focusItemIcon} />
+                  <span className={styles.focusItemText}>
+                    <span className={styles.focusItemCount}>{overdueFollowUps.length}</span>
+                    <span className={styles.focusItemLabel}> overdue</span>
+                  </span>
+                </div>
+                <div className={styles.focusDivider} />
+              </>
+            )}
+            {sentEstimates > 0 && (
+              <>
+                <div className={styles.focusItem} onClick={() => navigate('/leads')}>
+                  <FileText className={styles.focusItemIcon} />
+                  <span className={styles.focusItemText}>
+                    <span className={styles.focusItemCount}>{sentEstimates}</span>
+                    <span className={styles.focusItemLabel}> awaiting response</span>
+                  </span>
+                </div>
+                <div className={styles.focusDivider} />
+              </>
+            )}
+            <div className={styles.focusItem} onClick={() => navigate('/jobs')}>
+              <Wrench className={styles.focusItemIcon} />
+              <span className={styles.focusItemText}>
+                <span className={styles.focusItemCount}>{todaysFollowUps.length}</span>
+                <span className={styles.focusItemLabel}> jobs today</span>
+              </span>
+            </div>
+            {todaysFollowUps.length === 0 && sentEstimates === 0 && overdueFollowUps.length === 0 && (
+              <div className={styles.focusItem}>
+                <Target className={styles.focusItemIcon} />
+                <span className={styles.focusItemText}>
+                  <span className={styles.focusItemLabel}>All caught up!</span>
+                </span>
+              </div>
+            )}
+          </div>
+        </motion.div>
         
         <div className={styles.stats}>
           {stats.map((stat, i) => (

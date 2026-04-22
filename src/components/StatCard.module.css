@@ -1,17 +1,32 @@
 .card {
-  background: var(--bg-secondary);
+  background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
   padding: 20px;
   transition: all var(--transition-base);
+  background-image: var(--gradient-card);
+  box-shadow: var(--shadow-base);
+  position: relative;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  pointer-events: none;
 }
 
 .card:hover {
   border-color: var(--border-default);
+  box-shadow: var(--shadow-md);
 }
 
 .glass {
-  background: rgba(18, 18, 22, 0.7);
+  background: rgba(26, 26, 31, 0.85);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -43,6 +58,8 @@
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.2;
+  /* Subtle text glow for important numbers */
+  text-shadow: 0 0 30px rgba(245, 158, 11, 0.15);
 }
 
 .trend {

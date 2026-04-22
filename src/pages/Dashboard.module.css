@@ -6,6 +6,21 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+}
+
+/* Subtle ambient glow behind important content */
+.container::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse at center, var(--glow-accent-subtle) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .stats {
@@ -54,10 +69,15 @@
   padding: 12px 0;
   border-bottom: 1px solid var(--border-subtle);
   cursor: pointer;
+  transition: all var(--transition-base);
 }
 
 .followUpItem:last-child {
   border-bottom: none;
+}
+
+.followUpItem:hover {
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .followUpDot {
@@ -103,8 +123,9 @@
 }
 
 .followUpBtn:hover {
-  background: var(--accent-primary-muted);
-  color: var(--accent-primary);
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  box-shadow: 0 0 12px var(--glow-accent);
 }
 
 .activityList {
@@ -142,6 +163,7 @@
   font-weight: 600;
   color: var(--text-inverse);
   flex-shrink: 0;
+  box-shadow: 0 0 12px var(--glow-accent-subtle);
 }
 
 .leadInfo {
@@ -261,6 +283,7 @@
   background: var(--bg-elevated);
   border-color: var(--border-default);
   color: var(--text-primary);
+  box-shadow: 0 0 16px var(--glow-accent-subtle);
 }
 
 .actionButton span {

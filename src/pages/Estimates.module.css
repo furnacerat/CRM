@@ -14,7 +14,7 @@
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 2fr 1fr 1fr;
   gap: 12px;
   margin: 16px 0;
 }
@@ -26,9 +26,14 @@
   padding: 16px;
 }
 
+.statCard.primary {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.06) 0%, var(--bg-secondary) 100%);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
 .statLabel {
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 500;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -37,9 +42,19 @@
 }
 
 .statValue {
-  font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-primary);
+}
+
+.statCard.primary .statValue {
+  font-size: 1.75rem;
+  color: var(--accent-primary);
+  text-shadow: 0 0 20px var(--glow-accent-subtle);
+}
+
+.statCard:not(.primary) .statValue {
+  font-size: 1.125rem;
+  opacity: 0.8;
 }
 
 .list {
@@ -61,7 +76,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .estimateInfo {
@@ -84,7 +99,7 @@
 .estimateAmount {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   padding: 12px 0;
   border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
@@ -92,14 +107,18 @@
 }
 
 .amountLabel {
-  font-size: 0.8125rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
   color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .amountValue {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--accent-primary);
+  text-shadow: 0 0 16px var(--glow-accent-subtle);
 }
 
 .estimateMeta {

@@ -142,6 +142,24 @@ export default function Jobs() {
                   <div className={styles.jobInfo}>
                     <h3 className={styles.jobName}>{job.project}</h3>
                     <p className={styles.jobCustomer}>{job.customerName}</p>
+                    {job.contractAmount && (() => {
+                      const revenue = job.contractAmount;
+                      const cost = job.estimatedCost || (revenue * 0.7);
+                      const profit = revenue - cost;
+                      const margin = revenue > 0 ? (profit / revenue) * 100 : 0;
+                      let health = 'healthy';
+                      if (margin < 10) health = 'risk';
+                      else if (margin < 20) health = 'tight';
+                      
+                      return (
+                        <div className={`${styles.profitIndicator} ${styles[health]}`}>
+                          Est. Profit
+                          <span className={styles.profitAmount}>
+                            ${Math.round(profit).toLocaleString()}
+                          </span>
+                        </div>
+                      );
+                    })()}
                   </div>
                   <Badge variant={getStatusInfo(job.status).color}>
                     {getStatusInfo(job.status).label}

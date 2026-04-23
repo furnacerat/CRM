@@ -537,9 +537,10 @@ function EstimateBuilder({ leads, customers, onClose, onSave }) {
                 </div>
               )}
               <div className={styles.itemInputs}>
+                <span className={styles.itemHeader}>Qty</span>
                 <input
                   type="number"
-                  placeholder="Qty"
+                  placeholder="1"
                   value={item.quantity}
                   onChange={(e) => {
                     const qty = parseFloat(e.target.value) || 1;
@@ -549,6 +550,7 @@ function EstimateBuilder({ leads, customers, onClose, onSave }) {
                   }}
                   className={styles.itemInput}
                 />
+                <span className={styles.itemHeader}>Your Price</span>
                 <input
                   type="number"
                   placeholder="$"

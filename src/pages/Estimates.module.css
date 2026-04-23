@@ -413,9 +413,17 @@
 }
 
 .itemInputs {
-  display: flex;
+  display: grid;
+  grid-template-columns: 40px 60px 80px auto;
   gap: 8px;
   align-items: center;
+}
+
+.itemHeader {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .itemInput {

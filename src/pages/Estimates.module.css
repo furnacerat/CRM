@@ -504,11 +504,22 @@
   justify-content: space-between;
   font-size: 0.9375rem;
   color: var(--text-secondary);
+  padding: 6px 0;
 }
 
 .totalSell {
   font-weight: 700;
   color: var(--accent-primary);
+}
+
+.profit {
+  color: var(--status-success);
+  font-weight: 600;
+}
+
+.loss {
+  color: var(--status-error);
+  font-weight: 600;
 }
 
 .builderActions {

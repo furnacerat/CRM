@@ -278,6 +278,7 @@ function EstimateBuilder({ leads, customers, onClose, onSave }) {
   const [newCustomer, setNewCustomer] = useState({ name: '', phone: '', email: '' });
   const [showPricingLibrary, setShowPricingLibrary] = useState(false);
   const [editingItemIndex, setEditingItemIndex] = useState(null);
+  const [markupPercent, setMarkupPercent] = useState(30);
 
   const projectTypes = [
     'Kitchen Remodel',
@@ -591,12 +592,18 @@ function EstimateBuilder({ leads, customers, onClose, onSave }) {
 
       <div className={styles.builderTotals}>
         <div className={styles.totalRow}>
-          <span>Internal Cost</span>
+          <span>Your Cost</span>
           <span>${totalCost.toLocaleString()}</span>
         </div>
         <div className={styles.totalRow}>
-          <span>Client Price</span>
+          <span>Quote Price</span>
           <span className={styles.totalSell}>${totalSell.toLocaleString()}</span>
+        </div>
+        <div className={styles.totalRow}>
+          <span>Your Profit</span>
+          <span className={totalSell - totalCost > 0 ? styles.profit : styles.loss}>
+            ${(totalSell - totalCost).toLocaleString()}
+          </span>
         </div>
         <div className={styles.totalRow}>
           <span>Margin</span>
@@ -647,12 +654,18 @@ function EstimateDetail({ estimate, onStatusChange, onClose }) {
         <h4 className={styles.sectionTitle}>Totals</h4>
         <div className={styles.detailTotals}>
           <div className={styles.detailTotal}>
-            <span>Internal Cost</span>
+            <span>Your Cost</span>
             <span>${totalCost.toLocaleString()}</span>
           </div>
           <div className={styles.detailTotal}>
-            <span>Client Price</span>
+            <span>Quote Price</span>
             <span className={styles.highlight}>${totalSell.toLocaleString()}</span>
+          </div>
+          <div className={styles.detailTotal}>
+            <span>Your Profit</span>
+            <span className={totalSell - totalCost > 0 ? styles.profit : styles.loss}>
+              ${(totalSell - totalCost).toLocaleString()}
+            </span>
           </div>
           <div className={styles.detailTotal}>
             <span>Margin</span>
@@ -766,26 +779,26 @@ function EstimateView({ estimate, mode }) {
           </div>
 
           <div className={`${styles.viewSection} ${styles.profit}`}>
-            <h4>Profit Analysis</h4>
+            <h4>Profit Analysis (Internal)</h4>
             <table className={styles.viewTable}>
               <tbody>
                 <tr className={styles.costRow}>
-                  <td>Total Materials Cost</td>
+                  <td>Materials Cost</td>
                   <td></td>
                   <td>${materialsCost.toLocaleString()}</td>
                 </tr>
                 <tr className={styles.costRow}>
-                  <td>Total Labor Cost</td>
+                  <td>Labor Cost</td>
                   <td></td>
                   <td>${laborCost.toLocaleString()}</td>
                 </tr>
                 <tr className={styles.profitRow}>
-                  <td>Gross Profit</td>
+                  <td>Your Profit</td>
                   <td></td>
                   <td>${(totalSell - totalCost).toLocaleString()}</td>
                 </tr>
                 <tr className={styles.marginRow}>
-                  <td>Profit Margin</td>
+                  <td>Margin %</td>
                   <td></td>
                   <td>{totalCost > 0 ? Math.round(((totalSell - totalCost) / totalSell) * 100) : 0}%</td>
                 </tr>

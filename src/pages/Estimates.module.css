@@ -415,6 +415,7 @@
 .itemInputs {
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 
 .itemInput {
@@ -426,6 +427,37 @@
   color: var(--text-primary);
   font-size: 0.8125rem;
   text-align: right;
+}
+
+.removeItemBtn {
+  padding: 4px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
+}
+
+.removeItemBtn:hover {
+  color: var(--status-error);
+  background: var(--status-error-bg);
+}
+
+.itemName {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+  transition: all 0.15s ease;
+}
+
+.itemName:hover {
+  border-color: var(--border-default);
+  background: var(--bg-secondary);
 }
 
 .addItemBtn {

@@ -277,6 +277,7 @@ function EstimateBuilder({ leads, customers, onClose, onSave }) {
   const [showNewCustomer, setShowNewCustomer] = useState(false);
   const [newCustomer, setNewCustomer] = useState({ name: '', phone: '', email: '' });
   const [showPricingLibrary, setShowPricingLibrary] = useState(false);
+  const [editingItemIndex, setEditingItemIndex] = useState(null);
 
   const projectTypes = [
     'Kitchen Remodel',
@@ -520,21 +521,35 @@ function EstimateBuilder({ leads, customers, onClose, onSave }) {
         <div className={styles.itemsList}>
           {form.items.map((item, i) => (
             <div key={i} className={styles.itemRow}>
-              {item.name === '' ? (
+              {editingItemIndex === i ? (
                 <input
                   type="text"
                   placeholder="Item name"
                   autoFocus
-                  onChange={(e) => {
+                  defaultValue={item.name}
+                  onBlur={(e) => {
                     const newItems = [...form.items];
-                    newItems[i] = { ...item, name: e.target.value };
+                    newItems[i] = { ...item, name: e.target.value || item.name };
                     setForm({ ...form, items: newItems });
+                    setEditingItemIndex(null);
                   }}
-                  onBlur={() => item.name === '' && setForm((prev) => ({ ...prev, items: prev.items.filter((_, idx) => idx !== i) }))}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const newItems = [...form.items];
+                      newItems[i] = { ...item, name: e.target.value || item.name };
+                      setForm({ ...form, items: newItems });
+                      setEditingItemIndex(null);
+                    }
+                  }}
                   className={styles.itemNameInput}
                 />
               ) : (
-                <div className={styles.itemName}>{item.name}</div>
+                <div 
+                  className={styles.itemName}
+                  onClick={() => setEditingItemIndex(i)}
+                >
+                  {item.name || 'Click to edit'}
+                </div>
               )}
               <div className={styles.itemInputs}>
                 <input
@@ -561,6 +576,12 @@ function EstimateBuilder({ leads, customers, onClose, onSave }) {
                   }}
                   className={styles.itemInput}
                 />
+                <button
+                  className={styles.removeItemBtn}
+                  onClick={() => setForm((prev) => ({ ...prev, items: prev.items.filter((_, idx) => idx !== i) }))}
+                >
+                  <XCircle size={14} />
+                </button>
               </div>
             </div>
           ))}

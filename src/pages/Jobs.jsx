@@ -25,6 +25,7 @@ import Drawer from '../components/Drawer';
 import { useCRM } from '../context/CRMContext';
 import { initialJobs, JOB_STATUSES, JOB_PHASES } from '../data/jobs';
 import { initialEstimates } from '../data/estimates';
+import { initialExpenses } from '../data/expenses';
 import styles from './Jobs.module.css';
 
 const statusFilters = [
@@ -429,6 +430,21 @@ function JobDetail({ job, onToggleTask, onStatusChange }) {
   const [showNoteInput, setShowNoteInput] = useState(false);
   const getStatusInfo = (status) => JOB_STATUSES.find((s) => s.id === status) || { label: status, color: 'default' };
 
+  const jobExpenses = initialExpenses.filter((e) => e.jobId === job.id);
+  const actualCost = jobExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const estimatedCost = job.estimatedCost || Math.round((job.contractAmount || 0) * 0.7);
+  const revenue = job.contractAmount || 0;
+  const profit = revenue - actualCost;
+  const margin = revenue > 0 ? (profit / revenue) * 100 : 0;
+  let health = 'healthy';
+  if (margin < 10) health = 'risk';
+  else if (margin < 20) health = 'tight';
+
+  const tasks = job.tasks || [];
+  const completedTasks = tasks.filter((t) => t.completed).length;
+  const totalTasks = tasks.length;
+  const taskProgress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+
   return (
     <div className={styles.detail}>
       <div className={styles.detailHeader}>
@@ -450,45 +466,59 @@ function JobDetail({ job, onToggleTask, onStatusChange }) {
         <div className={styles.financialsTitle}>
           <DollarSign size={14} />
           Financials
+          <span className={`${styles.jobHealth} ${styles[health]}`}>
+            {health === 'healthy' && 'On Track'}
+            {health === 'tight' && 'Tight'}
+            {health === 'risk' && 'At Risk'}
+          </span>
         </div>
         <div className={styles.financialsGrid}>
           <div className={styles.financialItem}>
             <span className={styles.financialLabel}>Contract Value</span>
             <span className={styles.financialValue}>
-              ${(job.contractAmount || 0).toLocaleString()}
+              ${revenue.toLocaleString()}
             </span>
           </div>
           <div className={styles.financialItem}>
             <span className={styles.financialLabel}>Est. Cost</span>
             <span className={styles.financialValue}>
-              ${(job.estimatedCost || Math.round((job.contractAmount || 0) * 0.7)).toLocaleString()}
+              ${estimatedCost.toLocaleString()}
             </span>
           </div>
           <div className={styles.financialItem}>
             <span className={styles.financialLabel}>Actual Cost</span>
-            <span className={styles.financialValue} style={{ opacity: 0.6 }}>
-              ${(job.actualCost || Math.round((job.contractAmount || 0) * 0.65)).toLocaleString()}
+            <span className={styles.financialValue}>
+              ${actualCost.toLocaleString()}
             </span>
           </div>
-          {(() => {
-            const revenue = job.contractAmount || 0;
-            const cost = job.actualCost || Math.round(revenue * 0.65);
-            const profit = revenue - cost;
-            const margin = revenue > 0 ? (profit / revenue) * 100 : 0;
-            let health = 'healthy';
-            if (margin < 10) health = 'risk';
-            else if (margin < 20) health = 'tight';
-          return (
           <div className={styles.financialItem}>
             <span className={styles.financialLabel}>Profit</span>
             <span className={`${styles.financialValue} ${styles.profit} ${styles[health]}`}>
               ${Math.round(profit).toLocaleString()} ({Math.round(margin)}%)
             </span>
           </div>
-          );
-          })()}
         </div>
       </div>
+
+      {jobExpenses.length > 0 && (
+        <div className={styles.detailSection}>
+          <div className={styles.sectionHeader}>
+            <h4 className={styles.sectionTitle}>Expenses ({jobExpenses.length})</h4>
+            <span className={styles.expenseTotal}>${actualCost.toLocaleString()}</span>
+          </div>
+          <div className={styles.expensesList}>
+            {jobExpenses.slice(0, 5).map((exp) => (
+              <div key={exp.id} className={styles.expenseItem}>
+                <span className={styles.expenseDesc}>{exp.description}</span>
+                <span className={styles.expenseAmount}>${exp.amount.toLocaleString()}</span>
+              </div>
+            ))}
+            {jobExpenses.length > 5 && (
+              <div className={styles.moreExpenses}>+{jobExpenses.length - 5} more</div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className={styles.detailSection}>
         <h4 className={styles.sectionTitle}>Customer</h4>

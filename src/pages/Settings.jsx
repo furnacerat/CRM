@@ -12,13 +12,16 @@ import {
   Check,
   Info,
   AlertTriangle,
+  DollarSign,
+  Plus,
+  Trash2,
 } from 'lucide-react';
 import { PageHeader } from '../components/TopHeader';
 import Card from '../components/Card';
 import Badge from '../components/Badge';
 import Button from '../components/Button';
 import Drawer from '../components/Drawer';
-import { COMPANY_INFO, BRANDING, NOTIFICATION_SETTINGS, AUTOMATIONS, SMART_INSIGHTS } from '../data/settings';
+import { COMPANY_INFO, BRANDING, NOTIFICATION_SETTINGS, AUTOMATIONS, SMART_INSIGHTS, PRICING_ITEMS } from '../data/settings';
 import styles from './Settings.module.css';
 
 export default function Settings() {
@@ -62,6 +65,12 @@ export default function Settings() {
       icon: Shield,
       label: 'Security',
       description: 'Password and 2FA',
+    },
+    {
+      id: 'pricing',
+      icon: DollarSign,
+      label: 'Pricing Library',
+      description: 'Materials, labor & equipment rates',
     },
     {
       id: 'help',
@@ -164,6 +173,14 @@ export default function Settings() {
         title="Automations"
       >
         <AutomationSettings />
+      </Drawer>
+
+      <Drawer
+        isOpen={activeSection === 'pricing'}
+        onClose={() => setActiveSection(null)}
+        title="Pricing Library"
+      >
+        <PricingLibrarySettings />
       </Drawer>
     </div>
   );
@@ -306,6 +323,94 @@ function AutomationSettings() {
             {automation.enabled && <Check size={14} />}
           </div>
         </button>
+      ))}
+    </div>
+  );
+}
+
+function PricingLibrarySettings() {
+  const [items, setItems] = useState(PRICING_ITEMS);
+  const [newItem, setNewItem] = useState({ name: '', category: 'materials', unitCost: '', unit: 'each' });
+  const [showAdd, setShowAdd] = useState(false);
+
+  const addItem = () => {
+    if (newItem.name && newItem.unitCost) {
+      setItems([...items, { ...newItem, id: `cust-${Date.now()}`, unitCost: parseFloat(newItem.unitCost) }]);
+      setNewItem({ name: '', category: 'materials', unitCost: '', unit: 'each' });
+      setShowAdd(false);
+    }
+  };
+
+  const deleteItem = (id) => {
+    setItems(items.filter((i) => i.id !== id));
+  };
+
+  const categories = ['materials', 'labor', 'equipment', 'other'];
+
+  return (
+    <div className={styles.settingsForm}>
+      <p className={styles.settingsDesc}>
+        Manage your pricing items for faster estimate creation
+      </p>
+
+      {showAdd && (
+        <div className={styles.addItemForm}>
+          <input
+            className={styles.input}
+            placeholder="Item name"
+            value={newItem.name}
+            onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+          />
+          <select
+            className={styles.select}
+            value={newItem.category}
+            onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
+          >
+            {categories.map((c) => (
+              <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
+            ))}
+          </select>
+          <input
+            className={styles.input}
+            type="number"
+            placeholder="Cost"
+            value={newItem.unitCost}
+            onChange={(e) => setNewItem({ ...newItem, unitCost: e.target.value })}
+          />
+          <input
+            className={styles.input}
+            placeholder="Unit (e.g., sq ft, hr)"
+            value={newItem.unit}
+            onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
+          />
+          <div className={styles.addItemActions}>
+            <button className={styles.cancelBtn} onClick={() => setShowAdd(false)}>Cancel</button>
+            <button className={styles.saveBtn} onClick={addItem}>Add</button>
+          </div>
+        </div>
+      )}
+
+      {!showAdd && (
+        <button className={styles.addBtn} onClick={() => setShowAdd(true)}>
+          <Plus size={16} /> Add Item
+        </button>
+      )}
+
+      {categories.map((cat) => (
+        <div key={cat} className={styles.catSection}>
+          <h4 className={styles.catTitle}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</h4>
+          <div className={styles.catItems}>
+            {items.filter((i) => i.category === cat).map((item) => (
+              <div key={item.id} className={styles.priceItem}>
+                <span className={styles.priceItemName}>{item.name}</span>
+                <span className={styles.priceItemCost}>${item.unitCost}/{item.unit}</span>
+                <button className={styles.deleteBtn} onClick={() => deleteItem(item.id)}>
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       ))}
     </div>
   );

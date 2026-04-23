@@ -28,6 +28,7 @@ import Drawer from '../components/Drawer';
 import Modal from '../components/Modal';
 import { useCRM } from '../context/CRMContext';
 import { initialEstimates } from '../data/estimates';
+import { PRICING_ITEMS } from '../data/settings';
 import styles from './Estimates.module.css';
 
 const statusFilters = [
@@ -273,6 +274,9 @@ function EstimateBuilder({ leads, customers, onClose, onSave }) {
   });
   const [showProjectSelect, setShowProjectSelect] = useState(false);
   const [selectedProjectType, setSelectedProjectType] = useState('');
+  const [showNewCustomer, setShowNewCustomer] = useState(false);
+  const [newCustomer, setNewCustomer] = useState({ name: '', phone: '', email: '' });
+  const [showPricingLibrary, setShowPricingLibrary] = useState(false);
 
   const projectTypes = [
     'Kitchen Remodel',
@@ -319,42 +323,138 @@ function EstimateBuilder({ leads, customers, onClose, onSave }) {
     <div className={styles.builder}>
       <div className={styles.builderSection}>
         <h4 className={styles.sectionTitle}>Customer / Lead</h4>
-        <select
-          className={styles.select}
-          value={form.leadId || form.customerId}
-          onChange={(e) => {
-            const selected = e.target.value;
-            if (selected.startsWith('lead-')) {
-              const lead = leads.find((l) => l.id === selected.replace('lead-', ''));
-              setForm({ ...form, leadId: lead?.id, leadName: lead?.name, customerId: '', customerName: lead?.name });
-            } else if (selected.startsWith('cust-')) {
-              const customer = customers.find((c) => c.id === selected.replace('cust-', ''));
-              setForm({ ...form, customerId: customer?.id, customerName: customer?.name, leadId: '', leadName: '' });
-            }
-          }}
-        >
-          <option value="">Select customer or lead</option>
-          <optgroup label="Leads">
-            {leads.filter((l) => !['won', 'lost'].includes(l.stage)).map((lead) => (
-              <option key={`lead-${lead.id}`} value={`lead-${lead.id}`}>
-                {lead.name} (Lead)
-              </option>
-            ))}
-          </optgroup>
-          <optgroup label="Customers">
-            {customers.map((customer) => (
-              <option key={`cust-${customer.id}`} value={`cust-${customer.id}`}>
-                {customer.name}
-              </option>
-            ))}
-          </optgroup>
-        </select>
+        {showNewCustomer ? (
+          <div className={styles.newCustomerForm}>
+            <input
+              type="text"
+              placeholder="Customer name"
+              value={newCustomer.name}
+              onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
+              className={styles.input}
+            />
+            <input
+              type="tel"
+              placeholder="Phone (optional)"
+              value={newCustomer.phone}
+              onChange={(e) => setNewCustomer({ ...newCustomer, phone: e.target.value })}
+              className={styles.input}
+            />
+            <input
+              type="email"
+              placeholder="Email (optional)"
+              value={newCustomer.email}
+              onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
+              className={styles.input}
+            />
+            <div className={styles.newCustomerActions}>
+              <button
+                className={styles.cancelBtn}
+                onClick={() => {
+                  setShowNewCustomer(false);
+                  setNewCustomer({ name: '', phone: '', email: '' });
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.saveBtn}
+                onClick={() => {
+                  if (newCustomer.name.trim()) {
+                    setForm({ ...form, customerName: newCustomer.name, leadName: newCustomer.name });
+                    setShowNewCustomer(false);
+                  }
+                }}
+              >
+                Add Customer
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <select
+              className={styles.select}
+              value={form.leadId || form.customerId}
+              onChange={(e) => {
+                const selected = e.target.value;
+                if (selected === '__new__') {
+                  setShowNewCustomer(true);
+                } else if (selected.startsWith('lead-')) {
+                  const lead = leads.find((l) => l.id === selected.replace('lead-', ''));
+                  setForm({ ...form, leadId: lead?.id, leadName: lead?.name, customerId: '', customerName: lead?.name });
+                } else if (selected.startsWith('cust-')) {
+                  const customer = customers.find((c) => c.id === selected.replace('cust-', ''));
+                  setForm({ ...form, customerId: customer?.id, customerName: customer?.name, leadId: '', leadName: '' });
+                }
+              }}
+            >
+              <option value="">Select customer or lead</option>
+              <option value="__new__">+ Create New Customer</option>
+              <optgroup label="Leads">
+                {leads.filter((l) => !['won', 'lost'].includes(l.stage)).map((lead) => (
+                  <option key={`lead-${lead.id}`} value={`lead-${lead.id}`}>
+                    {lead.name} (Lead)
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Customers">
+                {customers.map((customer) => (
+                  <option key={`cust-${customer.id}`} value={`cust-${customer.id}`}>
+                    {customer.name}
+                  </option>
+                ))}
+              </optgroup>
+            </select>
+            {form.customerName && (
+              <span className={styles.selectedCustomer}>{form.customerName}</span>
+            )}
+          </>
+        )}
       </div>
 
-      <div className={styles.builderSection}>
-        <div className={styles.sectionHeader}>
+<div className={styles.builderSection}>
           <h4 className={styles.sectionTitle}>Projects</h4>
-          <button className={styles.addBtn} onClick={() => setShowProjectSelect(!showProjectSelect)}>
+          {form.projects.length > 0 && (
+            <button className={styles.addPricingBtn} onClick={() => setShowPricingLibrary(!showPricingLibrary)}>
+              <Briefcase size={14} /> {showPricingLibrary ? 'Hide' : 'Add'} from Pricing
+            </button>
+          )}
+          <div className={styles.projectChips}>
+            {form.projects.map((project) => (
+              <span key={project} className={styles.projectChip}>
+                {project}
+                <button onClick={() => setForm((prev) => ({ ...prev, projects: prev.projects.filter((p) => p !== project) }))}>
+                  <XCircle size={14} />
+                </button>
+              </span>
+            ))}
+          </div>
+          {showPricingLibrary && form.projects.length > 0 && (
+            <div className={styles.pricingLibrary}>
+              {['materials', 'labor', 'equipment', 'other'].map((cat) => (
+                <div key={cat} className={styles.pricingCategory}>
+                  <h5 className={styles.pricingCatTitle}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</h5>
+                  <div className={styles.pricingItems}>
+                    {PRICING_ITEMS.filter((p) => p.category === cat).map((item) => (
+                      <button
+                        key={item.id}
+                        className={styles.pricingItem}
+                        onClick={() => addItem({ name: item.name, category: item.category, unitCost: item.unitCost, quantity: 1, sellPrice: item.unitCost * 1.3 })}
+                      >
+                        <span className={styles.pricingItemName}>{item.name}</span>
+                        <span className={styles.pricingItemCost}>${item.unitCost}/{item.unit}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className={styles.builderSection}>
+          <div className={styles.sectionHeader}>
+            <h4 className={styles.sectionTitle}>Projects</h4>
+            <button className={styles.addBtn} onClick={() => setShowProjectSelect(!showProjectSelect)}>
             <Plus size={16} /> Add
           </button>
         </div>
@@ -420,7 +520,22 @@ function EstimateBuilder({ leads, customers, onClose, onSave }) {
         <div className={styles.itemsList}>
           {form.items.map((item, i) => (
             <div key={i} className={styles.itemRow}>
-              <div className={styles.itemName}>{item.name}</div>
+              {item.name === '' ? (
+                <input
+                  type="text"
+                  placeholder="Item name"
+                  autoFocus
+                  onChange={(e) => {
+                    const newItems = [...form.items];
+                    newItems[i] = { ...item, name: e.target.value };
+                    setForm({ ...form, items: newItems });
+                  }}
+                  onBlur={() => item.name === '' && setForm((prev) => ({ ...prev, items: prev.items.filter((_, idx) => idx !== i) }))}
+                  className={styles.itemNameInput}
+                />
+              ) : (
+                <div className={styles.itemName}>{item.name}</div>
+              )}
               <div className={styles.itemInputs}>
                 <input
                   type="number"

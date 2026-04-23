@@ -17,6 +17,8 @@ import {
   ArrowRight,
   Eye,
   Edit,
+  Printer,
+  Mail,
 } from 'lucide-react';
 import { PageHeader } from '../components/TopHeader';
 import Card from '../components/Card';
@@ -28,7 +30,7 @@ import Drawer from '../components/Drawer';
 import Modal from '../components/Modal';
 import { useCRM } from '../context/CRMContext';
 import { initialEstimates } from '../data/estimates';
-import { PRICING_ITEMS, DEFAULT_MARKUP } from '../data/settings';
+import { PRICING_ITEMS, DEFAULT_MARKUP, COMPANY_INFO } from '../data/settings';
 import styles from './Estimates.module.css';
 
 const statusFilters = [
@@ -739,14 +741,29 @@ function EstimateView({ estimate, mode }) {
 
   return (
     <div className={styles.view}>
+      {mode === 'internal' && (
+        <div className={styles.internalBadge}>Internal View</div>
+      )}
+
+      {mode === 'client' && (
+        <div className={styles.viewActions}>
+          <button className={styles.actionBtn} onClick={() => window.print()}>
+            <Printer size={16} /> Print
+          </button>
+          <button className={styles.actionBtn} onClick={() => {
+            const subject = encodeURIComponent(`Quote for ${estimate.projects?.join(', ')}`);
+            const body = encodeURIComponent(`Hi ${estimate.customerName},\n\nI've attached the quote for your ${estimate.projects?.join(', ')} project.\n\nTotal: $${totalSell.toLocaleString()}\n\nLet me know if you have any questions!\n\nBest,\n${COMPANY_INFO.owner}`);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+          }}>
+            <Mail size={16} /> Email
+          </button>
+        </div>
+      )}
+
       <div className={styles.viewHeader}>
         <h2>{estimate.customerName}</h2>
         <p>{estimate.projects?.join(', ')}</p>
       </div>
-
-      {mode === 'internal' && (
-        <div className={styles.internalBadge}>Internal View</div>
-      )}
 
       {mode === 'internal' ? (
         <>

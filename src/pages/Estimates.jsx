@@ -412,50 +412,10 @@ function EstimateBuilder({ leads, customers, onClose, onSave }) {
         )}
       </div>
 
-<div className={styles.builderSection}>
+      <div className={styles.builderSection}>
+        <div className={styles.sectionHeader}>
           <h4 className={styles.sectionTitle}>Projects</h4>
-          {form.projects.length > 0 && (
-            <button className={styles.addPricingBtn} onClick={() => setShowPricingLibrary(!showPricingLibrary)}>
-              <Briefcase size={14} /> {showPricingLibrary ? 'Hide' : 'Add'} from Pricing
-            </button>
-          )}
-          <div className={styles.projectChips}>
-            {form.projects.map((project) => (
-              <span key={project} className={styles.projectChip}>
-                {project}
-                <button onClick={() => setForm((prev) => ({ ...prev, projects: prev.projects.filter((p) => p !== project) }))}>
-                  <XCircle size={14} />
-                </button>
-              </span>
-            ))}
-          </div>
-          {showPricingLibrary && form.projects.length > 0 && (
-            <div className={styles.pricingLibrary}>
-              {['materials', 'labor', 'equipment', 'other'].map((cat) => (
-                <div key={cat} className={styles.pricingCategory}>
-                  <h5 className={styles.pricingCatTitle}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</h5>
-                  <div className={styles.pricingItems}>
-                    {PRICING_ITEMS.filter((p) => p.category === cat).map((item) => (
-                      <button
-                        key={item.id}
-                        className={styles.pricingItem}
-                        onClick={() => addItem({ name: item.name, category: item.category, unitCost: item.unitCost, quantity: 1, sellPrice: item.unitCost * 1.3 })}
-                      >
-                        <span className={styles.pricingItemName}>{item.name}</span>
-                        <span className={styles.pricingItemCost}>${item.unitCost}/{item.unit}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className={styles.builderSection}>
-          <div className={styles.sectionHeader}>
-            <h4 className={styles.sectionTitle}>Projects</h4>
-            <button className={styles.addBtn} onClick={() => setShowProjectSelect(!showProjectSelect)}>
+          <button className={styles.addBtn} onClick={() => setShowProjectSelect(!showProjectSelect)}>
             <Plus size={16} /> Add
           </button>
         </div>
@@ -487,7 +447,31 @@ function EstimateBuilder({ leads, customers, onClose, onSave }) {
       <div className={styles.builderSection}>
         <div className={styles.sectionHeader}>
           <h4 className={styles.sectionTitle}>Line Items</h4>
+          <button className={styles.addPricingBtn} onClick={() => setShowPricingLibrary(!showPricingLibrary)}>
+            <Briefcase size={14} /> {showPricingLibrary ? 'Hide' : 'Library'}
+          </button>
         </div>
+        {showPricingLibrary && (
+          <div className={styles.pricingLibrary}>
+            {['materials', 'labor', 'equipment', 'other'].map((cat) => (
+              <div key={cat} className={styles.pricingCategory}>
+                <h5 className={styles.pricingCatTitle}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</h5>
+                <div className={styles.pricingItems}>
+                  {PRICING_ITEMS.filter((p) => p.category === cat).map((item) => (
+                    <button
+                      key={item.id}
+                      className={styles.pricingItem}
+                      onClick={() => addItem({ name: item.name, category: item.category, unitCost: item.unitCost, quantity: 1, sellPrice: Math.round(item.unitCost * 1.3) })}
+                    >
+                      <span className={styles.pricingItemName}>{item.name}</span>
+                      <span className={styles.pricingItemCost}>${item.unitCost}/{item.unit}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
         {form.projects.length > 0 && (
           <div className={styles.suggestions}>
             <p className={styles.suggestionsTitle}>

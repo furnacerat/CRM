@@ -28,7 +28,7 @@ import Drawer from '../components/Drawer';
 import Modal from '../components/Modal';
 import { useCRM } from '../context/CRMContext';
 import { initialEstimates } from '../data/estimates';
-import { PRICING_ITEMS } from '../data/settings';
+import { PRICING_ITEMS, DEFAULT_MARKUP } from '../data/settings';
 import styles from './Estimates.module.css';
 
 const statusFilters = [
@@ -278,7 +278,7 @@ function EstimateBuilder({ leads, customers, onClose, onSave }) {
   const [newCustomer, setNewCustomer] = useState({ name: '', phone: '', email: '' });
   const [showPricingLibrary, setShowPricingLibrary] = useState(false);
   const [editingItemIndex, setEditingItemIndex] = useState(null);
-  const [markupPercent, setMarkupPercent] = useState(30);
+  const [markupPercent, setMarkupPercent] = useState(DEFAULT_MARKUP);
 
   const projectTypes = [
     'Kitchen Remodel',
@@ -462,7 +462,7 @@ function EstimateBuilder({ leads, customers, onClose, onSave }) {
                     <button
                       key={item.id}
                       className={styles.pricingItem}
-                      onClick={() => addItem({ name: item.name, category: item.category, unitCost: item.unitCost, quantity: 1, sellPrice: Math.round(item.unitCost * 1.3) })}
+                      onClick={() => addItem({ name: item.name, category: item.category, unitCost: item.unitCost, quantity: 1, sellPrice: Math.round(item.unitCost * (1 + markupPercent/100)) })}
                     >
                       <span className={styles.pricingItemName}>{item.name}</span>
                       <span className={styles.pricingItemCost}>${item.unitCost}/{item.unit}</span>

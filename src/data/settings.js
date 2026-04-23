@@ -7,6 +7,8 @@ export const COMPANY_INFO = {
   website: 'www.contractorscrm.com',
 };
 
+export const DEFAULT_MARKUP = 30;
+
 export const BRANDING = {
   accentColor: '#F59E0B',
   logo: null,

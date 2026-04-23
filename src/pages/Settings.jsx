@@ -15,13 +15,14 @@ import {
   DollarSign,
   Plus,
   Trash2,
+  Edit,
 } from 'lucide-react';
 import { PageHeader } from '../components/TopHeader';
 import Card from '../components/Card';
 import Badge from '../components/Badge';
 import Button from '../components/Button';
 import Drawer from '../components/Drawer';
-import { COMPANY_INFO, BRANDING, NOTIFICATION_SETTINGS, AUTOMATIONS, SMART_INSIGHTS, PRICING_ITEMS } from '../data/settings';
+import { COMPANY_INFO, BRANDING, NOTIFICATION_SETTINGS, AUTOMATIONS, SMART_INSIGHTS, PRICING_ITEMS, DEFAULT_MARKUP } from '../data/settings';
 import styles from './Settings.module.css';
 
 export default function Settings() {
@@ -332,12 +333,21 @@ function PricingLibrarySettings() {
   const [items, setItems] = useState(PRICING_ITEMS);
   const [newItem, setNewItem] = useState({ name: '', category: 'materials', unitCost: '', unit: 'each' });
   const [showAdd, setShowAdd] = useState(false);
+  const [markup, setMarkup] = useState(DEFAULT_MARKUP);
+  const [editingItem, setEditingItem] = useState(null);
 
   const addItem = () => {
     if (newItem.name && newItem.unitCost) {
       setItems([...items, { ...newItem, id: `cust-${Date.now()}`, unitCost: parseFloat(newItem.unitCost) }]);
       setNewItem({ name: '', category: 'materials', unitCost: '', unit: 'each' });
       setShowAdd(false);
+    }
+  };
+
+  const updateItem = () => {
+    if (editingItem && editingItem.name && editingItem.unitCost) {
+      setItems(items.map((i) => (i.id === editingItem.id ? { ...editingItem, unitCost: parseFloat(editingItem.unitCost) } : i)));
+      setEditingItem(null);
     }
   };
 
@@ -350,8 +360,21 @@ function PricingLibrarySettings() {
   return (
     <div className={styles.settingsForm}>
       <p className={styles.settingsDesc}>
-        Manage your pricing items for faster estimate creation
+        Manage your pricing items and default markup for estimates
       </p>
+
+      <div className={styles.markupSection}>
+        <label className={styles.label}>Default Markup %</label>
+        <div className={styles.markupInput}>
+          <input
+            type="number"
+            value={markup}
+            onChange={(e) => setMarkup(parseInt(e.target.value) || 0)}
+            className={styles.input}
+          />
+          <span className={styles.markupApplied}>Applied: {markup}%</span>
+        </div>
+      </div>
 
       {showAdd && (
         <div className={styles.addItemForm}>
@@ -402,11 +425,46 @@ function PricingLibrarySettings() {
           <div className={styles.catItems}>
             {items.filter((i) => i.category === cat).map((item) => (
               <div key={item.id} className={styles.priceItem}>
-                <span className={styles.priceItemName}>{item.name}</span>
-                <span className={styles.priceItemCost}>${item.unitCost}/{item.unit}</span>
-                <button className={styles.deleteBtn} onClick={() => deleteItem(item.id)}>
-                  <Trash2 size={14} />
-                </button>
+                {editingItem?.id === item.id ? (
+                  <div className={styles.editItemForm}>
+                    <input
+                      className={styles.input}
+                      value={editingItem.name}
+                      onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
+                    />
+                    <input
+                      className={styles.input}
+                      type="number"
+                      value={editingItem.unitCost}
+                      onChange={(e) => setEditingItem({ ...editingItem, unitCost: e.target.value })}
+                    />
+                    <input
+                      className={styles.input}
+                      value={editingItem.unit}
+                      onChange={(e) => setEditingItem({ ...editingItem, unit: e.target.value })}
+                    />
+                    <div className={styles.editActions}>
+                      <button onClick={() => setEditingItem(null)}>Cancel</button>
+                      <button onClick={updateItem}>Save</button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <span className={styles.priceItemName}>{item.name}</span>
+                    <span className={styles.priceItemCost}>
+                      ${item.unitCost}/{item.unit}
+                      <span className={styles.priceWithMarkup}>→ ${Math.round(item.unitCost * (1 + markup/100))}/{item.unit}</span>
+                    </span>
+                    <div className={styles.itemActions}>
+                      <button className={styles.editBtn} onClick={() => setEditingItem(item)}>
+                        <Edit size={14} />
+                      </button>
+                      <button className={styles.deleteBtn} onClick={() => deleteItem(item.id)}>
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </div>
